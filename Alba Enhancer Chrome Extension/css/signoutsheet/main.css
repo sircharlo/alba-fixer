@@ -1,0 +1,168 @@
+.mainTable tbody td {
+  vertical-align: middle;
+}
+
+div.terr {
+  /*height: 10in;*/
+  width: 1.6in;
+  display: inline-block;
+  vertical-align: top;
+  page-break-inside: avoid;
+  padding-top: .2in;
+}
+
+div.terr span, div.terr div {
+  /*vertical-align: middle;
+  text-align: center;
+  border: 0;
+  padding: 0px;*/
+}
+
+div.terr > div > span {
+  /*display: table-cell;*/
+  display: inline-block;
+}
+
+div.terr > div:last-child {
+  border-bottom: 1px solid black;
+}
+
+div.terrNameRow {
+  height: 24px;
+}
+
+
+div.terrPub, div.terrDate {
+  height: 18px;
+  line-height: 18px;
+  font-size: 11px;
+  border: black 1px solid;
+  border-width: 1px 1px 0px 1px;
+  vertical-align: middle;
+  text-align: center;
+}
+
+div.terrPub.empty, div.terrDate.empty {
+  display: none;
+}
+
+div.terrDate div {
+  width: 50%;
+  height: 18px;
+  line-height: 18px;
+  white-space: nowrap;
+  overflow: hidden;
+  display: inline-block;
+  box-sizing: border-box;
+}
+
+div.terrDate div:last-child {
+  border-left: 1px solid black;
+}
+
+.terrLabel {
+  font-size: 7px;
+  display: inline-block;
+  line-height: 6px;
+  margin-right: 3px;
+  vertical-align: 1px;
+}
+
+.terrNo {
+  font-size: 14px;
+  font-weight: bold;
+  vertical-align: 1px;
+}
+
+.terrName {
+  text-align: left;
+  padding: .2em .5em;
+}
+
+/*
+
+.territoryAssignmentRecord tbody {
+    border: 3px black solid;
+}
+
+.territoryAssignmentRecord tr.name {
+    border-top: 2px black solid;
+    border-bottom: 1px black solid;
+}
+
+.territoryAssignmentRecord td.dateleft {
+    border-right: 1px black solid;
+    border-left: 2px black solid;
+}
+
+.territoryAssignmentRecord tr.name td {
+    border-right: 2px black solid;
+    border-left: 2px black solid;
+    background-color: transparent;
+}*/
+
+.chart.fullpage {
+	width: 8in;
+	/*height: 10.5in;*/
+}
+
+.chart.fullpage .chart {
+	width: 4in;
+	/*height: 5.25in;*/
+	display: inline-block;
+}
+
+#printTAR,
+#hideTAR {
+  position: fixed;
+  top: 0;
+  right: 0;
+}
+
+#updateStatus {
+  top: 0;
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  padding: 0.5em;
+}
+
+
+/*#areaFrequencyContainer canvas {
+    display: inline-block !important;
+    padding: .05in .2in;
+    border-bottom: grey 2px solid;
+}
+
+#graphContainer canvas {
+    width: 8in !important;
+    height: 10in !important;
+}
+
+.big-areas {
+    width: 1.6in !important;
+    height: 2.4in !important;
+}
+
+.small-areas {
+    width: 1.2in !important;
+    height: 1.8in !important;
+}
+
+#areaContainer ul li {
+    margin-top: 2px;
+    margin-bottom: 2px;
+}*/
+
+@media print {
+  #printTAR,
+  #hideTAR,
+  #updateStatus {
+    display: none !important;
+  }
+  
+  div.terrPub.empty, div.terrDate.empty {
+    display: block;
+  }
+}

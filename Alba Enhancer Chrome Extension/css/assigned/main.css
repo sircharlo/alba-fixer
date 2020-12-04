@@ -1,0 +1,81 @@
+.recently-worked td {
+	background-color: #ccc !important;
+}
+
+.overdue td {
+	background-color: #faf2cc !important;
+}
+
+.over-one-year td {
+	background-color: #ebcccc !important;
+}
+
+#shame {
+    columns: 2;
+    column-gap: 0;
+    font-size: 15px;
+    margin: 0 0.2in;
+}
+
+#shame>li {
+    break-inside: avoid-column;
+    padding: 1em;
+    border: 1px solid grey;
+}
+
+#shame>li ul.terrs {
+    margin-bottom: 1em;
+		list-style: none;
+}
+
+#shame>li ul.terrs li {
+    padding-bottom: 0.5em;
+}
+
+#shame>li ul.terrs li::before {
+  content: "\2B24";  /* Add content: \2022 is the CSS Code/unicode for a bullet */
+  font-weight: bold; /* If you want it to be bold */
+  display: inline-block; /* Needed to add space between the bullet and the text */
+  width: 1.5em; /* Also needed for space (tweak if needed) */
+  margin-left: -1.5em; /* Also needed for space (tweak if needed) */
+	color: #00C853;
+}
+
+#shame>li ul.terrs li.overdue::before {
+	color: #d50000;
+}
+
+#shame>li ul.terrs li.overdue {
+	font-weight: bold;
+}
+
+#shame>li {
+    list-style-type: none;
+}
+
+.name {
+    font-weight: bold;
+    font-size: 125%;
+    padding-bottom: 1em;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.smaller {
+    font-size: 80%;
+}
+
+#territory-shame-remove {
+    position: fixed;
+    top: 0;
+    right: 0;
+    margin: 1em;
+}
+
+@media print {
+    #territory-shame-remove {
+        display: none;
+    }
+}

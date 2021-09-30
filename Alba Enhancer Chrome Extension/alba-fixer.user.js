@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Alba - Territories
-// @version      0.1.1
+// @version      0.1.2
 // @description  Fixes for Alba
 // @author       SirCharlo
 // @match        https://www.mcmxiv.com/alba/*
@@ -16,9 +16,6 @@ $(function() {
   var colors = ["#b71c1c", "#880e4f", "#4a148c", "#0d47a1", "#006064", "#1b5e20", "#827717", "#ff6f00", "#212121", "#b71c1c", "#880e4f", "#4a148c", "#0d47a1", "#006064", "#1b5e20", "#827717", "#ff6f00", "#212121"],
     hereAPIKey = "aXUToJoWnlgv0zCAgupM7ukogmefDriDS2ZcQroT8Ps",
     mapquestAPIKey = "cWthMOAPfdye1t02NcpkzD30NVLfhNy6";
-
-  let processed, addresses;
-
   GM_addStyle(".disabled a{pointer-events:none} li.dropdown.admin{padding-top:4px}");
   $("ul.pull-right li.dropdown").last().find("a").first().find(".muted").hide();
   $("ul.nav:not(.pull-right) > li").each(function() {
@@ -37,7 +34,9 @@ $(function() {
     });
   } else if (curPage.includes("addresses")) {
     GM_addStyle(".massiveLabel{width:8em;display:inline-block;vertical-align:top}");
-    $("#addresses").after("<div id=\"massiveChange\" class=\"modal fade hide\" tabindex=\"-1\"><div class=\"modal-header\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\">×</button><h3>Batch edit</h3></div><div class=\"modal-body\"><p>You may here overwrite any fields in all open entries:</p><p id=\"fieldPicker\"></p></div><div class=\"modal-footer\"><button class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button><button type=\"button\" id=\"cmd-mass-change\" class=\"btn btn-primary\">Batch edit</button></div></div>"), $("#addresses").after("<div id=\"errorMessage\" class=\"modal fade hide\" tabindex=\"-1\"><div class=\"modal-header\"><h3>Error</h3></div><div class=\"modal-body\"><p id=\"errorText\"></p></div><div class=\"modal-footer\"><button class=\"btn\" data-dismiss=\"modal\">OK</button></div></div></div><div id=\"deleteMessage\" class=\"modal fade hide\" tabindex=\"-1\"><div class=\"modal-header\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\">×</button><h3>Massive delete</h3></div><div class=\"modal-body\"><p>By clicking <strong>Delete</strong>, you are confirming that you would like to <strong>permanently delete</strong> all rows currently opened on this page.</p></div><div class=\"modal-footer\"><p><button type=\"button\" id=\"cmd-mass-delete\" class=\"btn btn-danger\">Delete</button></p></div></div>"), $(document).on("click", ".cmd-osm", function() {
+    $("#addresses").after("<div id=\"massiveChange\" class=\"modal fade hide\" tabindex=\"-1\"><div class=\"modal-header\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\">×</button><h3>Batch edit</h3></div><div class=\"modal-body\"><p>You may here overwrite any fields in all open entries:</p><p id=\"fieldPicker\"></p></div><div class=\"modal-footer\"><button class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button><button type=\"button\" id=\"cmd-mass-change\" class=\"btn btn-primary\">Batch edit</button></div></div>");
+    $("#addresses").after("<div id=\"errorMessage\" class=\"modal fade hide\" tabindex=\"-1\"><div class=\"modal-header\"><h3>Error</h3></div><div class=\"modal-body\"><p id=\"errorText\"></p></div><div class=\"modal-footer\"><button class=\"btn\" data-dismiss=\"modal\">OK</button></div></div></div><div id=\"deleteMessage\" class=\"modal fade hide\" tabindex=\"-1\"><div class=\"modal-header\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\">×</button><h3>Massive delete</h3></div><div class=\"modal-body\"><p>By clicking <strong>Delete</strong>, you are confirming that you would like to <strong>permanently delete</strong> all rows currently opened on this page.</p></div><div class=\"modal-footer\"><p><button type=\"button\" id=\"cmd-mass-delete\" class=\"btn btn-danger\">Delete</button></p></div></div>");
+    $(document).on("click", ".cmd-osm", function() {
       var elem = this,
         prevAddress = $(elem).siblings("[name='address']").val(),
         prevCity = $(elem).siblings("[name='city']").val(),
@@ -65,7 +64,8 @@ $(function() {
           $("#errorText").html(err), $("#error-show").click();
         }
       });
-    }), $(document).on("click", ".cmd-bing", function() {
+    });
+    $(document).on("click", ".cmd-bing", function() {
       var elem = this,
         prevAddress = $(elem).siblings("[name='address']").val(),
         prevCity = $(elem).siblings("[name='city']").val(),
@@ -109,18 +109,24 @@ $(function() {
         childList: true,
         subtree: true
       };
-    observer.observe(target, config), $("td.person small.tt").each(function() {
+    observer.observe(target, config);
+    $("td.person small.tt").each(function() {
       $(this).html($(this).html() + ": " + $(this).data("original-title").split(" by ")[1].match(/\b(\w)/g).join(""));
-    }), $("li.visible-desktop").after("<li class='dropdown admin'><button id='dropdown-admin' class='btn btn-lg btn-danger' data-toggle='dropdown'>Admin</button><ul class='dropdown-menu'><li><a id='select-all'>Open all entries for editing</a></li><li class='divider'></li><li><a id='bing-all'>Correct opened addresses using Bing</a></li><li><a id='osm-all'>Correct opened addresses using OSM</a></li><li><a id='massive-change' href='#massiveChange' data-toggle='modal'>Batch edit fields in opened entries</a></li><li><a id='search-replace'>Search and replace in all opened entries</a></li><li class='divider'></li><li><a id='save-all'>Save all opened entries</a></li><li><a id='delete-all'>Delete all opened entries</a></li><li><a id='cancel-all'>Cancel all modifications</a></li></ul></li><button id='error-show' href='#errorMessage' class='hide' data-toggle='modal'>Error</button><button id='delete-show' href='#deleteMessage' class='hide' data-toggle='modal'>Error</button>"), $("#select-all").click(function() {
+    });
+    $("li.visible-desktop").after("<li class='dropdown admin'><button id='dropdown-admin' class='btn btn-lg btn-danger' data-toggle='dropdown'>Admin</button><ul class='dropdown-menu'><li><a id='select-all'>Open all entries for editing</a></li><li class='divider'></li><li><a id='bing-all'>Correct opened addresses using Bing</a></li><li><a id='osm-all'>Correct opened addresses using OSM</a></li><li><a id='massive-change' href='#massiveChange' data-toggle='modal'>Batch edit fields in opened entries</a></li><li><a id='search-replace'>Search and replace in all opened entries</a></li><li class='divider'></li><li><a id='save-all'>Save all opened entries</a></li><li><a id='delete-all'>Delete all opened entries</a></li><li><a id='cancel-all'>Cancel all modifications</a></li></ul></li><button id='error-show' href='#errorMessage' class='hide' data-toggle='modal'>Error</button><button id='delete-show' href='#deleteMessage' class='hide' data-toggle='modal'>Error</button>");
+    $("#select-all").click(function() {
       $.fx.off = true, $("#addresses tr").click();
-    }), $("#bing-all").click(function() {
+    });
+    $("#bing-all").click(function() {
       var counter = 0;
       for (let i = $(".cmd-bing").length; i > 0; i--) setTimeout(function() {
         console.log("$(\".cmd-bing\").eq(" + (i - 1) + ").click();"), $(".cmd-bing").eq(i - 1).click();
       }, 100 * counter), counter++;
-    }), $("#osm-all").click(function() {
+    });
+    $("#osm-all").click(function() {
       $(".cmd-osm").click();
-    }), $("#search-replace").click(function() {
+    });
+    $("#search-replace").click(function() {
       var regexP = prompt("Please enter the regex search expression here:");
       try {
         if ("" === regexP || void 0 === regexP) throw "No regex search expression was entered.";
@@ -140,11 +146,15 @@ $(function() {
       } catch (err) {
         $("#errorText").html(err), $("#error-show").click();
       }
-    }), $("#massive-change").click(function() {
+    });
+    $("#massive-change").click(function() {
       $("#fieldPicker").html(""), $("#addresses tr.edit:first").find("select:visible, input:visible, textarea:visible").clone().each(function() {
-        $(this).addClass("massiveField").val(""), $("#fieldPicker").append("<span class='massiveLabel'>" + $(this).prop("name") + "</span>", $(this)), $("#fieldPicker").append("<br/>");
+        $(this).addClass("massiveField").val("");
+        $("#fieldPicker").append("<span class='massiveLabel'>" + $(this).prop("name") + "</span>", $(this));
+        $("#fieldPicker").append("<br/>");
       });
-    }), $("#cmd-mass-change").click(function() {
+    });
+    $("#cmd-mass-change").click(function() {
       $(".massiveField").each(function() {
         if ("" != $(this).val() && null != $(this).val()) {
           var newValue = $(this).val();
@@ -170,11 +180,14 @@ $(function() {
     });
   } else if (curPage.includes("territories") || curPage.includes("assigned")) {
     GM_addStyle("#areasText ul{list-style-type:none;column-count:2} #polygonText{display:flex;height:30px;align-items:center} #polygonText button{margin-right:1em} #polygonText .progress{flex-grow:100;margin-bottom:0!important}");
-    $("[name=c]").after("<select id=\"c-select\"><option value=\"\">- Campaign -</option><option value=\"" + (new Date).getFullYear() + ": Кампания на Вечерю / Memorial\">Memorial</option><option value=\"" + (new Date).getFullYear() + ": Конгресс / Convention\">Convention</option></select>"), $("[name=c]").hide(), $("#c-select").change(function() {
-      $("[name=c]").val($("#c-select").val());
-    }), $("#territories").after("<div id=\"territoryAreas\" class=\"modal fade hide\" tabindex=\"-1\"><div class=\"modal-header\"><h3>Territories</h3></div><div class=\"modal-body\"><p id=\"areasText\"></p></div><div class=\"modal-footer\"><button class=\"btn\" data-dismiss=\"modal\">OK</button></div></div></div>"), $("input[name=g]").prop("checked", "checked"), $("li.visible-desktop").after("<li class='dropdown admin'><button id='dropdown-admin' class='btn btn-lg btn-danger' data-toggle='dropdown'>Admin</button><ul class='dropdown-menu'><li><a id='territory-areas'>Territory areas</a></li><li><a id='polygon-backup'>Polygon export</a></li></ul></li><button id='areas-show' href='#territoryAreas' class='hide' data-toggle='modal'>Areas</button><button id='backup-show' href='#polygonBackup' class='hide' data-toggle='modal'>Polygons</button>"), $("#territory-areas").click(function() {
-      areaEnumerate(), $("#areas-show").click();
-    }), $("#polygon-backup").click(function() {
+    $("#territories").after("<div id=\"territoryAreas\" class=\"modal fade hide\" tabindex=\"-1\"><div class=\"modal-header\"><h3>Territories</h3></div><div class=\"modal-body\"><p id=\"areasText\"></p></div><div class=\"modal-footer\"><button class=\"btn\" data-dismiss=\"modal\">OK</button></div></div></div>");
+    $("input[name=g]").prop("checked", "checked");
+    $("li.visible-desktop").after("<li class='dropdown admin'><button id='dropdown-admin' class='btn btn-lg btn-danger' data-toggle='dropdown'>Admin</button><ul class='dropdown-menu'><li><a id='territory-areas'>Territory areas</a></li><li><a id='polygon-backup'>Polygon export</a></li></ul></li><button id='areas-show' href='#territoryAreas' class='hide' data-toggle='modal'>Areas</button><button id='backup-show' href='#polygonBackup' class='hide' data-toggle='modal'>Polygons</button>");
+    $("#territory-areas").click(function() {
+      areaEnumerate();
+      $("#areas-show").click();
+    });
+    $("#polygon-backup").click(function() {
       var terrGeoJson = {
         type: "FeatureCollection",
         features: []
@@ -211,116 +224,70 @@ $(function() {
     });
     if (curPage.includes("assigned")) {
       GM_addStyle(".recently-worked td{background-color:#ccc!important}.overdue td{background-color:#faf2cc!important}.over-one-year td{background-color:#ebcccc!important}#shame{columns:2;column-gap:0;font-size:15px;margin:0 .2in}#shame>li{break-inside:avoid-column;padding:1em;border:1px solid grey}#shame>li ul.terrs{margin-bottom:1em;list-style:none}#shame>li ul.terrs li{padding-bottom:.5em}#shame>li ul.terrs li::before{content:'\\2B24';font-weight:700;display:inline-block;width:1.5em;margin-left:-1.5em;color:#00c853}#shame>li ul.terrs li.overdue::before{color:#d50000}#shame>li ul.terrs li.overdue{font-weight:700}#shame>li{list-style-type:none}.name{font-weight:700;font-size:125%;padding-bottom:1em}.terrs{padding-bottom:1em}.bold{font-weight:700}.smaller{font-size:80%}#territory-shame-remove{position:fixed;top:0;right:0;margin:1em}@media print{#territory-shame-remove{display:none}}");
-      $("#territories")
-        .after("<div id=\"territoryList\" class=\"modal fade hide\" tabindex=\"-1\"><div class=\"modal-header\"><h3>Territories</h3></div><div class=\"modal-body\"><ul id=\"individualTerritories\"></ul></div><div class=\"modal-footer\"><button class=\"btn\" data-dismiss=\"modal\">OK</button></div></div></div>"), $("#territories")
-        .after("<div id=\"territoryFacts\" class=\"modal fade hide\" tabindex=\"-1\"><div class=\"modal-header\"><h3>Territory Facts</h3></div><div class=\"modal-body\"><ul id=\"facts\"></ul></div><div class=\"modal-footer\"><button class=\"btn\" data-dismiss=\"modal\">OK</button></div></div></div>"), $("#territories")
-        .after("<div id=\"territoryLinks\" class=\"modal fade hide\" tabindex=\"-1\"><div class=\"modal-header\"><h3>Territory Links</h3></div><div class=\"modal-body\"><ul id=\"links\"></ul></div><div class=\"modal-footer\"><button class=\"btn\" data-dismiss=\"modal\">OK</button></div></div></div>"), $("#territory-areas")
-        .parent()
-        .after("<li><a id='territory-list'>Territory list</a></li><button id='list-show' href='#territoryList' class='hide' data-toggle='modal'>List</button>"), $("#territory-areas")
-        .parent()
-        .after("<li><a id='territory-facts'>Territory facts</a></li><button id='facts-show' href='#territoryFacts' class='hide' data-toggle='modal'>Facts</button>"), $("#territory-areas")
-        .parent()
-        .after("<li><a id='territory-links'>Territory links</a></li><button id='links-show' href='#territoryLinks' class='hide' data-toggle='modal'>Links</button>"), $("#territory-areas")
-        .parent()
-        .after("<li><a id='territory-shame'>List of assigned and overdue territories</a></li>"), $("#territory-list")
-        .click(function() {
-          createList(), $("#list-show")
-            .click();
-        }), $("#territory-links")
-        .click(function() {
-          createLinks(), $("#links-show")
-            .click();
-        }), $("#territory-facts")
-        .click(function() {
-          createFacts(), $("#facts-show")
-            .click();
-        }), $("html")
-        .on("click", "#territory-shame-remove", function() {
-          $("#shameContainer, #territory-shame-remove")
-            .remove(), $("body > *:not(.datepicker):not(script)")
-            .show();
-        }), $("#territory-shame")
-        .click(function() {
-          $("body")
-            .append("<div id='shameContainer'></div>"), $("#shameContainer")
-            .append("<ul id='shame'></ul>"), createShame(), $("body > *")
-            .hide(), $("#shameContainer")
-            .show(), $("body")
-            .after("<button id='territory-shame-remove'>Back to Assigned</button>");
-        }), $("[name=so]")
-        .parent()
-        .wrap("<div></div>"), $("#view div:first label:first")
-        .clone()
-        .appendTo($("#view div:first div")), $("[name=av]:not(:first)")
-        .attr("name", "od"), $("[name=od]")
-        .parent()
-        .html($("[name=od]")
-          .parent()
-          .html()
-          .replace("Available", "Overdue")), $("#view div:first label:first")
-        .clone()
-        .insertAfter($("#view div:first label:first")), $("[name=av]:not(:first)")
-        .attr("name", "rw"), $("[name=rw]")
-        .parent()
-        .html($("[name=rw]")
-          .parent()
-          .html()
-          .replace("Available", "Completed in the past 6 months")), $("#view div:first label:first")
-        .clone()
-        .insertAfter($("#view div:first label:first")), $("[name=av]:not(:first)")
-        .attr("name", "nm"), $("[name=nm]")
-        .parent()
-        .html($("[name=nm]")
-          .parent()
-          .html()
-          .replace("Available", "Not worked in 6 to 12 months")), $("#view div:first label:first")
-        .clone()
-        .insertAfter($("#view div:first label:first")), $("[name=av]:not(:first)")
-        .attr("name", "nc"), $("[name=nc]")
-        .parent()
-        .html($("[name=nc]")
-          .parent()
-          .html()
-          .replace("Available", "Not worked in over 1 year")), $("[name=av]")
-        .on("change", function() {
-          $("[name=nc],[name=rw],[name=nm]")
-            .prop("disabled", !$(this)
-              .prop("checked"));
-        }), $("[name=so]")
-        .on("change", function() {
-          $("[name=od]")
-            .prop("disabled", !$(this)
-              .prop("checked"));
-        });
+      $("#territories").after("<div id=\"territoryList\" class=\"modal fade hide\" tabindex=\"-1\"><div class=\"modal-header\"><h3>Territories</h3></div><div class=\"modal-body\"><ul id=\"individualTerritories\"></ul></div><div class=\"modal-footer\"><button class=\"btn\" data-dismiss=\"modal\">OK</button></div></div></div>");
+      $("#territories").after("<div id=\"territoryFacts\" class=\"modal fade hide\" tabindex=\"-1\"><div class=\"modal-header\"><h3>Territory Facts</h3></div><div class=\"modal-body\"><ul id=\"facts\"></ul></div><div class=\"modal-footer\"><button class=\"btn\" data-dismiss=\"modal\">OK</button></div></div></div>");
+      $("#territories").after("<div id=\"territoryLinks\" class=\"modal fade hide\" tabindex=\"-1\"><div class=\"modal-header\"><h3>Territory Links</h3></div><div class=\"modal-body\"><ul id=\"links\"></ul></div><div class=\"modal-footer\"><button class=\"btn\" data-dismiss=\"modal\">OK</button></div></div></div>");
+      $("#territory-areas").parent().after("<li><a id='territory-list'>Territory list</a></li><button id='list-show' href='#territoryList' class='hide' data-toggle='modal'>List</button>");
+      $("#territory-areas").parent().after("<li><a id='territory-facts'>Territory facts</a></li><button id='facts-show' href='#territoryFacts' class='hide' data-toggle='modal'>Facts</button>");
+      $("#territory-areas").parent().after("<li><a id='territory-links'>Territory links</a></li><button id='links-show' href='#territoryLinks' class='hide' data-toggle='modal'>Links</button>");
+      $("#territory-areas").parent().after("<li><a id='territory-shame'>List of assigned and overdue territories</a></li>");
+      $("#territory-list").click(function() {
+        createList();
+        $("#list-show").click();
+      });
+      $("#territory-links").click(function() {
+        createLinks();
+        $("#links-show").click();
+      });
+      $("#territory-facts").click(function() {
+        createFacts();
+        $("#facts-show").click();
+      });
+      $("html").on("click", "#territory-shame-remove", function() {
+        $("#shameContainer, #territory-shame-remove").remove();
+        $("body > *:not(.datepicker):not(script)").show();
+      });
+      $("#territory-shame").click(function() {
+        $("body").append("<div id='shameContainer'></div>");
+        $("#shameContainer").append("<ul id='shame'></ul>");
+        createShame();
+        $("body > *").hide();
+        $("#shameContainer").show();
+        $("body").after("<button id='territory-shame-remove'>Back to Assigned</button>");
+      });
+      $("[name=so]").parent().wrap("<div></div>");
+      $("#view div:first label:first").clone().appendTo($("#view div:first div"));
+      $("[name=av]:not(:first)").attr("name", "od");
+      $("[name=od]").parent().html($("[name=od]").parent().html().replace("Available", "Overdue"));
+      $("#view div:first label:first").clone().insertAfter($("#view div:first label:first"));
+      $("[name=av]:not(:first)").attr("name", "rw");
+      $("[name=rw]").parent().html($("[name=rw]").parent().html().replace("Available", "Completed in the past 6 months"));
+      $("#view div:first label:first").clone().insertAfter($("#view div:first label:first"));
+      $("[name=av]:not(:first)").attr("name", "nm");
+      $("[name=nm]").parent().html($("[name=nm]").parent().html().replace("Available", "Not worked in 6 to 12 months"));
+      $("#view div:first label:first").clone().insertAfter($("#view div:first label:first"));
+      $("[name=av]:not(:first)").attr("name", "nc");
+      $("[name=nc]").parent().html($("[name=nc]").parent().html().replace("Available", "Not worked in over 1 year"));
+      $("[name=av]").on("change", function() {
+        $("[name=nc], [name=rw], [name=nm]").prop("disabled", !$(this).prop("checked"));
+      });
+      $("[name=so]").on("change", function() {
+        $("[name=od]").prop("disabled", !$(this).prop("checked"));
+      });
       let target = $("#territories")[0],
         observer = new MutationObserver(function(mutations) {
           mutations.forEach(function(mutation) {
             var newNodes = mutation.addedNodes;
-            if (newNodes.length > 0 && ($(newNodes)
-              .each(function() {
-                var $node = $(this)
-                  .find("td small.muted");
-                if ("Never completed" != $node.text()) {
-                  var dateSO, targetElem, prevDone = !1;
-                  $node.text()
-                    .match(/last/i) ? (dateSO = new Date($node.text()
-                      .replace(/Last completed /i, "")
-                      .split(" by ")[0]), targetElem = $node.parent()
-                      .next("td")
-                      .next("td")
-                      .find("span.badge"), prevDone = true) : (dateSO = new Date($node.text()), targetElem = $node.parent()
-                      .next("td")
-                      .find("span.badge"));
-                  var monthsSO = Math.abs(Math.round((dateSO - new Date) / 1e3 / 60 / 60 / 24 / 30.42 * 10) / 10);
-                  targetElem.text(monthsSO), prevDone && monthsSO <= 6 ? targetElem.closest("tr")
-                    .addClass("recently-worked") : !prevDone && monthsSO > 3 ? (targetElem.addClass("badge-important"), targetElem.closest("tr")
-                    .addClass("overdue")) : prevDone && monthsSO > 12 ? targetElem.closest("tr")
-                    .addClass("over-one-year") : prevDone && monthsSO > 6 && targetElem.closest("tr")
-                    .addClass("normal");
-                } else $node.closest("tr")
-                  .addClass("over-one-year");
-              }), true !== $("[name=av]")
-              .prop("disabled"))) {
+            if (newNodes.length > 0 && ($(newNodes).each(function() {
+              var $node = $(this).find("td small.muted");
+              if ("Never completed" != $node.text()) {
+                var dateSO, targetElem, prevDone = !1;
+                $node.text().match(/last/i) ? (dateSO = new Date($node.text().replace(/Last completed /i, "").split(" by ")[0]), targetElem = $node.parent().next("td").next("td").find("span.badge"), prevDone = true) : (dateSO = new Date($node.text()), targetElem = $node.parent().next("td").find("span.badge"));
+                var monthsSO = Math.abs(Math.round((dateSO - new Date) / 1e3 / 60 / 60 / 24 / 30.42 * 10) / 10);
+                targetElem.text(monthsSO);
+                prevDone && monthsSO <= 6 ? targetElem.closest("tr").addClass("recently-worked") : !prevDone && monthsSO > 3 ? (targetElem.addClass("badge-important"), targetElem.closest("tr").addClass("overdue")) : prevDone && monthsSO > 12 ? targetElem.closest("tr").addClass("over-one-year") : prevDone && monthsSO > 6 && targetElem.closest("tr").addClass("normal");
+              } else $node.closest("tr").addClass("over-one-year");
+            }), true !== $("[name=av]").prop("disabled"))) {
               var scriptSrc = String.raw `
                 function recentlyWorked() {
                     var e = "#777",
@@ -342,7 +309,8 @@ $(function() {
                 recentlyWorked(), $("[name=rw]").change(function() {
                     recentlyWorked()
                 });`;
-              injectScript(scriptSrc, "recently-worked", "body"), scriptSrc = String.raw `
+              injectScript(scriptSrc, "recently-worked", "body");
+              scriptSrc = String.raw `
                 function overDue() {
           var e = "#e8c517",
                         v = false;
@@ -362,7 +330,9 @@ $(function() {
                 }
                 overDue(), $("[name=od]").change(function () {
                     overDue()
-                });`, injectScript(scriptSrc, "overdue", "body"), scriptSrc = String.raw `
+                });`;
+              injectScript(scriptSrc, "overdue", "body");
+              scriptSrc = String.raw `
                 function normal() {
           var /*e = "#ffff00",*/
                         v = false;
@@ -382,7 +352,9 @@ $(function() {
                 }
                 normal(), $("[name=nm]").change(function () {
                     normal()
-                });`, injectScript(scriptSrc, "overdue", "body"), scriptSrc = String.raw `
+                });`;
+              injectScript(scriptSrc, "overdue", "body");
+              scriptSrc = String.raw `
                 function neverCompleted() {
           var e = "#b84747",
                         v = false;
@@ -402,7 +374,8 @@ $(function() {
                 }
                 neverCompleted(), $("[name=nc]").change(function () {
                     neverCompleted()
-                });`, injectScript(scriptSrc, "never-completed", "body");
+                });`;
+              injectScript(scriptSrc, "never-completed", "body");
             }
           });
         }),
@@ -410,20 +383,11 @@ $(function() {
         observer2 = new MutationObserver(function(mutations) {
           mutations.forEach(function(mutation) {
             if ("childList" == mutation.type && mutation.addedNodes.length > 0) {
-              var terrs = parseInt($("#summary .badge:eq(0)")
-                .text());
-              $("#stats tbody tr")
-                .each(function() {
-                  var newPercent = (parseInt($(this)
-                    .find("td:nth-child(2)")
-                    .text()) / terrs * 100)
-                    .toFixed(1) + "%";
-                  $(this)
-                    .find("td:nth-child(3)")
-                    .html(newPercent), $(this)
-                    .find("td:nth-child(4) div.bar")
-                    .css("width", newPercent);
-                });
+              var terrs = parseInt($("#summary .badge:eq(0)").text());
+              $("#stats tbody tr").each(function() {
+                var newPercent = (parseInt($(this).find("td:nth-child(2)").text()) / terrs * 100).toFixed(1) + "%";
+                $(this).find("td:nth-child(3)").html(newPercent), $(this).find("td:nth-child(4) div.bar").css("width", newPercent);
+              });
             }
           });
         }),
@@ -437,46 +401,59 @@ $(function() {
     buildTerritoryAssignmentRecord();
   } else if (curPage.includes("print") || curPage.includes("campaign")) {
     GM_addStyle(".card{max-width:8.25in;margin:0 auto}td.attempts div{height:8px;width:8px;border-color:#777}table tr{height:18px}.attempts{min-width:1px!important}.italic{font-variant:italic}.transparent{color:transparent}.break{display:block}.campaign{letter-spacing:-.5px}.addresses tbody td{white-space:nowrap;vertical-align:middle}img.map{width:4in!important;height:4in!important}.marker{width:12px!important;text-align:center!important;padding:1px 0 0!important}p.print-notes{padding:1em;border-style:solid;display:inline-block;border-radius:1em;margin-bottom:10pt;margin-right:0}.st1_bg{background-color:#66d2ff!important;color:#000!important}.st2_bg{background-color:#52d965!important;color:#000!important}.st6_bg{background-color:#ccc!important;color:#fff!important}.white-bg{background-color:#fff!important}.returnDate{padding:.5em 2.5em .5em 1.5em;border-radius:0 0 1em 0;display:inline-block;-webkit-print-color-adjust:exact;background:#ffab91;position:absolute}.returnDateString{font-weight:700}.group{display:inline-block;padding:.5em 1.5em .5em 2.5em;border-radius:0 0 0 1em;float:left}.group-name{font-weight:700}.directions{margin-top:10pt!important}a.directions,h1{margin-top:3em!important}.group-ls{background:#e1bee7}//purple 1 .group-lc{background:#aed581}//green 3 .group-kh{background:#80cbc4}//turquoise 2 .group-pf{background:#ffe082}// yellow 2 .strike{text-decoration:line-through}.instructions{font-size:90%;line-height:normal}.instructionsRU{font-size:100%;margin-top:2em}.langRU{column-count:2;list-style-position:inside}.phoneEntries{font-size:90%}.campaignHeader{margin:0 0 10pt}.doNotCallBadge{background-color:#444!important;color:#fff!important}.sizeToggle{position:absolute;left:50%;transform:translateX(-50%);top:1%;background:rgba(255,255,255,.9);border:2px #000 solid;border-radius:1em;padding:1em;z-index:99}.sizeToggle ul{padding:0;margin-bottom:0}.sizeToggle ul li{list-style-type:none}#mqMe{margin-left:1em}.label-language{border:1px solid rgba(0,0,0,.4);color:#000!important;font-size:90%!important;margin:0 .5em}#pageLine{border-top:2px solid #ccc;width:100%;position:absolute;top:10.15in;right:0}#transferDiv span.label{width:15em}#transferDiv textarea{width:30em;height:10em}@media print{.sizeToggle{display:none!important}#pageLine{display:none!important}}");
-    $(".addresses tr td:nth-child(5)").each(function() {
-      var addr = $(this).html().split(", ");
-      addr.length > 1 && (-1 !== addr.indexOf("QC") && addr.splice(addr.indexOf("QC"), 1), !addr[addr.length - 2].match(/\d+/g) && addr.splice(addr.length - 2, 1)), $(this).html(addr.join(", "));
-    }), $("p").addClass("instructions"), $("small.muted, .overview, h1 span.muted,span.badge").hide(), $(".addresses tr").each(function() {
-      $(this).find("td:nth-child(3), th:nth-child(3)").insertAfter($(this).find("td:nth-child(6), th:nth-child(6)")), $(this).find("td strike:first").closest("tr").find("td:nth-child(n+4),.nw").addClass("strike").addClass("muted"), $(this).find("td strike:first").closest("tr").find(".attempts div").hide(), $(this).find("td strike:first").closest("tr").find("td .marker").addClass("doNotCallBadge"), $(this).find("td strike").each(function() {
+    $("p").addClass("instructions"), $("small.muted, .overview, h1 span.muted,span.badge").hide();
+    $(".addresses tr").each(function() {
+      $(this).find("td:nth-child(3), th:nth-child(3)").insertAfter($(this).find("td:nth-child(6), th:nth-child(6)"));
+      $(this).find("td strike:first").closest("tr").find("td:nth-child(n+4),.nw").addClass("strike").addClass("muted");
+      $(this).find("td strike:first").closest("tr").find(".attempts div").hide();
+      $(this).find("td strike:first").closest("tr").find("td .marker").addClass("doNotCallBadge");
+      $(this).find("td strike").each(function() {
         $(this).replaceWith($(this).contents());
-      }), $(this).find("td.attempts div.completed").addClass("attempt").removeClass("completed");
-    }), $("th:contains(Status)").html(""), $("td.notes").removeClass("notes"), 1 == $(".card").length && (document.title = $("h1 strong").text()), $(".card").each(function() {
+      });
+      $(this).find("td.attempts div.completed").addClass("attempt").removeClass("completed");
+    });
+    $("th:contains(Status)").html("");
+    $("td.notes").removeClass("notes");
+    1 == $(".card").length && (document.title = $("h1 strong").text());
+    $(".card").each(function() {
       if ($(this).find("h1:contains(Telephone)").length > 0) {
         $(".map, #map-canvas, p:not(:contains(Notes)):eq(4)").hide(), $(this).find("h1 strong").addClass("st2_c");
         var languages = ["Р", "Б", "У", "А", "Ф", "NIS", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"],
           html = "<p class='instructionsRU'>Пожалуйста, установите галочки, чтобы указать, на каком языке каждый человек говорит.</p><ul class='langRU'>";
         $.each(["На русском", "На болгарском", "На украинском", "На английском", "На французском", "Телефон не работает"], function(k, v) {
           html += "<li>" + languages[k] + ": " + v + "</li>";
-        }), html += "</ul>", $("p.instructions:first").after(html), $(".instructions:first").nextAll("br:first()").remove(), $(this).find(".addresses").prevUntil("div").each(function() {
+        });
+        html += "</ul>";
+        $("p.instructions:first").after(html);
+        $(".instructions:first").nextAll("br:first()").remove();
+        $(this).find(".addresses").prevUntil("div").each(function() {
           $(this).hide();
-        }), $("span.nw").addClass("break").next("br").remove(), $(this).find(".addresses tr td .break").each(function() {
-          0 === $(this).text().length && $(this).closest("td").addClass("st1_bg"), $(this).text($(this).text().replace("(", "").replace(") ", "-"));
-        }), $(this).find(".addresses tr").each(function() {
-          $(this).find(":not(div):nth-child(5),:not(div):nth-child(4),th:not(div):nth-child(2),td:not(div):nth-child(2)").hide(), $(this).find("td:nth-child(6)").addClass("right").html(languages.map(language => `<span class="label label-language">☐ ${language}</span>`).join("")), $(this).find("td:nth-child(6) span.label-language:nth-child(-n+3)").addClass("st2_bg_f"), $(this).find("td:nth-child(6) span.label-language:nth-child(n+4):nth-child(-n+7)").addClass("st0_bg_f"), $(this).find("td:nth-child(6) span.label-language:nth-child(8)").addClass("white-bg"), $(this).find("th:nth-child(6)").css("text-align", "center"), $(this).find("td.attempts").insertAfter($(this).find("td:nth-child(1)")), $(this).find("th:nth-child(7)").insertAfter($(this).find("th:nth-child(1)"));
-        }), $("p:contains(addresses) > strong").html($("p:contains(addresses) > strong").html().replace(/addresses/i, "numbers")), $(".addresses").tablesorter({
-          sortList: [
-            [3, 0]
-          ]
-        }), $(this).find(".addresses tr td:nth-child(1)").each(function(n) {
+        });
+        $("span.nw").addClass("break").next("br").remove();
+        $(this).find(".addresses tr td .break").each(function() {
+          0 === $(this).text().length && $(this).closest("td").addClass("st1_bg");
+          $(this).text($(this).text().replace("(", "").replace(") ", "-"));
+        });
+        $(this).find(".addresses tr").each(function() {
+          $(this).find(":not(div):nth-child(5),:not(div):nth-child(4),th:not(div):nth-child(2),td:not(div):nth-child(2)").hide();
+          $(this).find("td:nth-child(6)").addClass("right").html(languages.map(language => `<span class="label label-language">☐ ${language}</span>`).join(""));
+          $(this).find("td:nth-child(6) span.label-language:nth-child(-n+3)").addClass("st2_bg_f");
+          $(this).find("td:nth-child(6) span.label-language:nth-child(n+4):nth-child(-n+7)").addClass("st0_bg_f");
+          $(this).find("td:nth-child(6) span.label-language:nth-child(8)").addClass("white-bg");
+          $(this).find("th:nth-child(6)").css("text-align", "center");
+          $(this).find("td.attempts").insertAfter($(this).find("td:nth-child(1)"));
+          $(this).find("th:nth-child(7)").insertAfter($(this).find("th:nth-child(1)"));
+        });
+        $("p:contains(addresses) > strong").html($("p:contains(addresses) > strong").html().replace(/addresses/i, "numbers"));
+        $(".addresses").tablesorter({
+          sortList: [[3, 0]]
+        });
+        $(this).find(".addresses tr td:nth-child(1)").each(function(n) {
           $(this).html("<strong class='marker' style='color: black;'>" + parseInt(n + 1) + "</span>");
-        }), $("td:not(:nth-child(1)) small.muted").show(), $("td:nth-child(3) br").remove(), $(this).find(".addresses td:not(.attempts)").addClass("phoneEntries");
-      } else if ($(this).find("h1:contains(CTB-)").length > 0) {
-        var currentUrl = window.location.href.split("st=").pop();
-        if (currentUrl.includes("1") || currentUrl.includes("2") || currentUrl.includes("3")) console.log("incorrect url for door transfers, redirecting..."), window.location = window.location.href.split("st=")[0] + "st=4,6";
-        else {
-          $("#map-canvas").remove(), $("h1").after("<div id='transferDiv'>"), $("#transferDiv").append("<div><button id='transfer'>Create transfer TSV</button> <span id='progress'></div>"), $("#transferDiv").append("<div><span class='label'>Congregation:</span> <input id='congName' /></div>"), $("#transferDiv").append("<div><span class='label'>Errors:</span> <textarea id='errors' /></div>"), $("#transferDiv").append("<div><span class='label'>Skipped:</span> <textarea id='skipped' /></div>"), $("#transferDiv").append("<div><span class='label'>Info:</span> <textarea id='info' /></div>"), $("#transferDiv").append("<div><span class='label'>Output:</span> <textarea id='output' /></div>"), $("h1 *:not(:visible)").remove();
-          let congName = $("h1").text().split("Congregation Territory Border - ").pop().trim();
-          congName.length > 0 && $("#congName").val(congName), $(this).find("#transfer").click(function() {
-            $("input#congName").val();
-            processed = 0;
-            let rows = $(".addresses tbody tr");
-            addresses = rows.length, startTransferCheck(0);
-          });
-        }
+        });
+        $("td:not(:nth-child(1)) small.muted").show();
+        $("td:nth-child(3) br").remove();
+        $(this).find(".addresses td:not(.attempts)").addClass("phoneEntries");
       } else {
         if ($(this).find("p:contains(Signed)").length > 0) {
           var arr = $(this).find("p:contains(Signed)").html().split("<br>")[1].replace(/[,.]/g, "").split(" "),
@@ -486,14 +463,9 @@ $(function() {
             ((contactedDate - soDate) / 1e3 / 60 / 60 / 24 / 30.5 > -4 || (contactedDate - soDate) / 1e3 / 60 / 60 / 24 / 30.5 > -4) && ($(this).show(), $(this).closest("tr").addClass("muted"), $(this).closest("tr").find("td:nth-child(n+3)").addClass("strike").addClass("italic"), $(this).closest("tr").find("td:nth-child(5)").html($(this)).attr("colspan", 3).addClass("right").removeClass("strike"), $(this).closest("tr").find("td:nth-child(1) strong").addClass("st6_bg"), $(this).closest("tr").find("td:nth-child(2) strong").addClass("tk1_c_f"), $(this).closest("tr").find("td:nth-child(6),td.attempts").hide());
           });
         }
-        if ($("p:contains(Notes:)").addClass("ro10_b").addClass("st1_bg_f").addClass("print-notes"), $(".print-notes").length > 0 && ($(".print-notes").html($(".print-notes").html().replace(":<", "<br/><").replace(/; /g, "<br/>")), $("p:contains(Printed)").after($(".print-notes")), $(".print-notes").html().includes("Group:"))) {
-          var group, notesArray = $(".print-notes").html().split("<br>"),
-            newNotes = [];
-          arr = jQuery.grep(notesArray, function(el) {
-            el.includes("Group:") ? group = el.split("Group: ")[1] : el.includes("Notes") || newNotes.push(el);
-          });
-          newNotes.length > 0 ? $(".print-notes").html("<strong>Notes</strong><br>" + newNotes.join("<br>")) : $(".print-notes").hide(), $("h1").before("<div class='group'>"), group.includes("LaSalle") ? $(".group").addClass("group-ls") : group.includes("Lachine") ? $(".group").addClass("group-lc") : group.includes("Hall") ? $(".group").addClass("group-kh") : group.includes("Pierrefonds") && $(".group").addClass("group-pf"), $(".group").html("Group:<br><span class='group-name'>" + group + "</span>");
-        }
+        $("#map-canvas").remove();
+        $(".attempts div, .qrcode, span.nw, .instructions").hide();
+        $(this).find(".addresses thead th, .addresses tr td:nth-child(2), .addresses tr td:nth-child(5), .addresses tr td:nth-child(6)").html("");
         if ($("p.instructions .muted").hide(), -1 !== $("p.instructions:eq(0)").text().indexOf("Signed out")) {
           var dateOptions = {
               year: "numeric",
@@ -724,47 +696,6 @@ $(function() {
     return element.contents().filter(function() {
       return 3 === this.nodeType;
     }).text().trim();
-  }
-  function increaseProgress(addr, row) {
-    processed++, "" != $("#progress").text() && $("#progress").is(":visible") || $("#progress").hide().fadeIn(), $("#progress").html(addr + " - " + processed + "/" + addresses + " = " + (processed / addresses * 100).toFixed(2) + "%"), row + 1 < addresses ? startTransferCheck(row + 1) : $("#progress").delay(2e3).fadeOut();
-  }
-
-  function startTransferCheck(row) {
-    var $this = $(".addresses tbody tr:eq(" + row + ")"),
-      addrId = parseInt($this.find("td:nth-child(1) .muted").text().trim()),
-      now = (new Date).toISOString().split("T")[0];
-    if (isNaN(addrId)) $("#errors").val($("#errors").val() + "ERROR: " + addrId + "\n");
-    else {
-      var addrUrl = "https://www.mcmxiv.com/alba/ts?mod=addresses&cmd=search&acids=3&exp=true&npp=25&cp=1&tid=0&lid=0&display=4%2C6&onlyun=false&q=" + addrId + "&sort=id&order=desc&lat=&lng=";
-      $.ajax({
-        async: true,
-        success: function(res) {
-          if (res.data.exp) {
-            var addrData = res.data.exp.split("\n")[1].split("\t");
-            if (addrData[16].includes("Sent to") || addrData[16].includes("Submitted to") || addrData[16].includes("Do not transfer") || addrData[5].includes("?") || addrData[15].includes("list")) $("#skipped").val($("#skipped").val() + "Already sent or invalid door, skipping: " + addrData[0] + "\n");
-            else {
-              $("#output").val($("#output").val() + addrData.join("\t") + "\n");
-              var updateUrl = encodeURI("https://www.mcmxiv.com/alba/ts?mod=addresses&cmd=save&id=" + addrData[0] + "&lat=" + addrData[11] + "&lng=" + addrData[12] + "&territory_id=0&status=6&language_id=3&full_name=" + addrData[4] + "&suite=" + addrData[5] + "&address=" + addrData[6] + "&city=" + addrData[7] + "&province=" + addrData[8] + "&country=" + addrData[10] + "&postcode=" + addrData[9] + "&telephone=" + addrData[13] + "&notes=" + addrData[15] + "&notes_private=[ " + now + "+-+Sent+to+" + congName + " ]\n" + addrData[16]);
-              $.ajax({
-                async: true,
-                success: function(res) {
-                  0 === res.error.length ? $("#info").val($("#info").val() + "MARKED AS SENT IN ALBA: " + addrData[0] + "\n") : $("#errors").val($("#errors").val() + "ERROR UPDATING IN ALBA: " + addrData[0] + ": " + res.error + "\n");
-                },
-                error: function(err) {
-                  $("#errors").val($("#errors").val() + "ERROR UPDATING IN ALBA: " + addrData[0] + ": " + err);
-                },
-                url: updateUrl
-              });
-            }
-            increaseProgress(addrData[0], row);
-          } else $("#skipped").val($("#skipped").val() + "not NV/MOVED, skipping: " + addrId + "\n");
-        },
-        error: function() {
-          $("#errors").val($("#errors").val() + "ERROR: " + addrId + "\n"), increaseProgress(addrId, row);
-        },
-        url: addrUrl
-      });
-    }
   }
   function getCurrentStatuses() {
     $("table.main tbody tr").each(function() {

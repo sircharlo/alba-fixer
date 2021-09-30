@@ -1,4 +1,6 @@
 {
+"update_url": "https://clients2.google.com/service/update2/crx",
+
     "content_scripts": [{
         "matches": [
             "https://www.mcmxiv.com/*",
@@ -94,11 +96,6 @@
         "64": "img/icon-64.png",
         "128": "img/icon-128.png"
     },
-    "permissions": [
-        "https://dev.virtualearth.net/",
-        "https://spreadsheets.google.com/",
-        "https://docs.google.com/"
-    ],
-    "version": "0.9.9.3",
+    "version": "0.9.9.4",
     "manifest_version": 2
 }

@@ -11,10 +11,10 @@ cd alba-fixer-build/
 
 echo "Compressing source files..."
 echo "  Compressing JS files..."
-find ./Alba\ Enhancer\ Chrome\ Extension/js -type f ! -path "*/common/*min.*" -name "*.js" -exec uglifyjs {} --compress --output {} \;
+#find ./Alba\ Enhancer\ Chrome\ Extension/js -type f ! -path "*/common/*min.*" -name "*.js" -exec uglifyjs {} --compress --output {} \;
 
 echo "  Compressing CSS files..."
-find ./Alba\ Enhancer\ Chrome\ Extension/css -type f -name "*.css" -exec cleancss {} -o {} \;
+#find ./Alba\ Enhancer\ Chrome\ Extension/css -type f -name "*.css" -exec cleancss {} -o {} \;
 
 echo "Creating package file..."
 echo "  Compressing extension package..."

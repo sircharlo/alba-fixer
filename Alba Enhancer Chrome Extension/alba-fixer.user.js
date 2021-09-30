@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Alba - Territories
-// @version      0.1.2
+// @version      0.1.3
 // @description  Fixes for Alba
 // @author       SirCharlo
 // @match        https://www.mcmxiv.com/alba/*
@@ -466,17 +466,17 @@ $(function() {
         $("#map-canvas").remove();
         $(".attempts div, .qrcode, span.nw, .instructions").hide();
         $(this).find(".addresses thead th, .addresses tr td:nth-child(2), .addresses tr td:nth-child(5), .addresses tr td:nth-child(6)").html("");
-        if ($("p.instructions .muted").hide(), -1 !== $("p.instructions:eq(0)").text().indexOf("Signed out")) {
+        if ($("p.instructions .muted").hide(), -1 !== $("p:contains(Signed)").text().indexOf("Signed out")) {
           var dateOptions = {
               year: "numeric",
               month: "long",
               day: "numeric"
             },
-            soPar = $("p.instructions:eq(0)"),
+            soPar = $("p:contains(Signed)"),
             soText = soPar.html().split("</strong><br>")[1].split("<br>")[0],
             formattedSoDate = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][(soDate = new Date(soText)).getMonth()] + " " + soDate.getDate() + ", " + soDate.getFullYear() + ".",
             soPub = soText.replace(formattedSoDate, "").replace("Signed out by ", ""),
-            returnDate = new Date(soDate.setMonth(soDate.getMonth() + 4)); - 1 == soPub.indexOf("Printed - To give out") ? (returnDateString = "Сдать до <span class='returnDateString'>" + returnDate.toLocaleDateString("ru-RU", dateOptions) + "</span><br/>Due before <span class='returnDateString'>" + returnDate.toLocaleDateString("en-CA", dateOptions) + "</span>", returnPubString = soPub) : (returnDateString = "Сдать до:<br/>Due before: <span class='returnDateString'>_________________</span>", returnPubString = "_________________"), soPar.html(soPar.html().replace(formattedSoDate, "<div class='returnDate'>" + returnDateString + "</div>").replace("Signed out by ", "").replace(soPub, "")), $("h1:eq(0)").html($("h1:eq(0)").html().replace(" - ", "<br/>")), $("h1:eq(0) strong").append("<br/><span class='soPub st4_c'>" + returnPubString + "</span>"), $(".group").length > 0 ? $(".returnDate").insertAfter(".group") : $(".returnDate").prependTo(".card");
+            returnDate = new Date(soDate.setMonth(soDate.getMonth() + 3)); - 1 == soPub.indexOf("Printed - To give out") ? (returnDateString = "Сдать до <span class='returnDateString'>" + returnDate.toLocaleDateString("ru-RU", dateOptions) + "</span><br/>Due before <span class='returnDateString'>" + returnDate.toLocaleDateString("en-CA", dateOptions) + "</span>", returnPubString = soPub) : (returnDateString = "Сдать до:<br/>Due before: <span class='returnDateString'>_________________</span>", returnPubString = "_________________"), soPar.html(soPar.html().replace(formattedSoDate, "<div class='returnDate'>" + returnDateString + "</div>").replace("Signed out by ", "").replace(soPub, "")), $("h1:eq(0)").html($("h1:eq(0)").html().replace(" - ", "<br/>")), $("h1:eq(0) strong").append("<br/><span class='soPub st4_c'>" + returnPubString + "</span>"), $(".group").length > 0 ? $(".returnDate").insertAfter(".group") : $(".returnDate").prependTo(".card");
         }
         if ($("#map-canvas").length > 0) $("#map-canvas").remove(), $(".card").prepend("<div class='right-corner clearfix'>"), $("div.right-corner").append("<img class='map'>");
         else {

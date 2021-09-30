@@ -1,5 +1,3 @@
-/* eslint no-undef: "off", no-console: "off" */
-
 // ==UserScript==
 // @name         Alba - Territories
 // @namespace    https://github.com/sircharlo
@@ -12,6 +10,8 @@
 // @require      https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js
 // @grant        GM_addStyle
 // ==/UserScript==
+
+/* eslint no-undef: "off", no-console: "off" */
 
 $(function() {
   var colors = ["#b71c1c", "#880e4f", "#4a148c", "#0d47a1", "#006064", "#1b5e20", "#827717", "#ff6f00", "#212121", "#b71c1c", "#880e4f", "#4a148c", "#0d47a1", "#006064", "#1b5e20", "#827717", "#ff6f00", "#212121"],

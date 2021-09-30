@@ -1,7 +1,6 @@
 // ==UserScript==
 // @name         Alba - Territories
-// @namespace    https://github.com/sircharlo
-// @version      0.1
+// @version      0.1.1
 // @description  Fixes for Alba
 // @author       SirCharlo
 // @match        https://www.mcmxiv.com/alba/*

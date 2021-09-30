@@ -23,7 +23,7 @@ $(function() {
   });
 
   let curPage = location.pathname;
-  if (curPage.includes("home")) {
+  if (curPage.includes("home") || curPage === "/alba/") {
     $("div.container > h3").each(function() {
       let total = $(this).html().replace(/\D/g, "");
       $(this).next().find("tr span.badge").each(function() {
@@ -41,25 +41,40 @@ $(function() {
         prevAddress = $(elem).siblings("[name='address']").val(),
         prevCity = $(elem).siblings("[name='city']").val(),
         prevPostCode = $(elem).siblings("[name='postcode']").val(),
+        prevProv = $(elem).siblings("[name='province']").val(),
         prevLat = $(elem).siblings("[name='lat']").val(),
         prevLng = $(elem).siblings("[name='lng']").val();
       $.getJSON("https://nominatim.openstreetmap.org/search?street=" + encodeURIComponent(prevAddress) + "&city=" + encodeURIComponent(prevCity) + "&state=quebec&country=canada&format=json&addressdetails=1").done(function(data) {
         try {
+          console.log(data);
           var initialData = data;
-          if (1 == (data = $.grep(data, function(a) {
+          if ($.grep(data, function(a) {
             return "node" === a.osm_type || "house" === a.type;
-          })).length) {
+          }).length === 1) {
             var newAddress = data[0].address.house_number + " " + data[0].address.road,
               newCity = "",
-              newPostCode = "";
-            "city_district" in data[0].address ? newCity = data[0].address.city_district : "suburb" in data[0].address ? newCity = data[0].address.suburb : "town" in data[0].address ? newCity = data[0].address.town : "village" in data[0].address ? newCity = data[0].address.village : "city" in data[0].address && (newCity = data[0].address.city), newPostCode = "postcode" in data[0].address ? data[0].address.postcode : prevPostCode;
-            var newLat = data[0].lat,
+              newProv = "QC",
+              newPostCode = "postcode" in data[0].address ? data[0].address.postcode : prevPostCode,
+              newLat = data[0].lat,
               newLng = data[0].lon;
+            "city_district" in data[0].address ? newCity = data[0].address.city_district : "suburb" in data[0].address ? newCity = data[0].address.suburb : "town" in data[0].address ? newCity = data[0].address.town : "village" in data[0].address ? newCity = data[0].address.village : "city" in data[0].address && (newCity = data[0].address.city);
             if ([newAddress, newCity, newPostCode, newLat, newLng].join(", ") != [prevAddress, prevCity, prevPostCode, prevLat, prevLng].join(", ")) {
               var modified = [];
-              newAddress != prevAddress && ($(elem).siblings("[name='address']").val(newAddress), "" === prevAddress && (prevAddress = "blank address"), modified.push(prevAddress)), newCity != prevCity && ($(elem).siblings("[name='city']").val(newCity), "" === prevCity && (prevCity = "blank city"), modified.push(prevCity)), newPostCode != prevPostCode && ($(elem).siblings("[name='postcode']").val(newPostCode), "" === prevPostCode && (prevPostCode = "blank postal code"), modified.push(prevPostCode)), newLat != prevLat && ($(elem).siblings("[name='lat']").val(newLat), "" === prevLat && (prevLat = "blank latitude"), modified.push(prevLat)), newLng != prevLng && ($(elem).siblings("[name='lng']").val(newLng), "" === prevLng && (prevLng = "blank longitude"), modified.push(prevLng)), newProv != prevProv && ($(elem).siblings("[name='province']").val(newProv), "" === prevProv && (prevProv = "blank province"), modified.push(prevProv)), $(elem).siblings("[name='country']").val("Canada"), $(elem).closest("td").find("#geoMessage").html("Replaced: " + modified.join(", "));
-            } else $(elem).closest("td").find("#geoMessage").html("The geotag operation did not reveal new or updated information."), isBatch && $(elem).closest("tr").find(".cmd-cancel").click();
-          } else 0 === data.length ? ($(elem).siblings("#geoMessage").html("Failed to geocode: no matches!"), console.log(initialData)) : ($(elem).siblings("#geoMessage").html("Failed to geocode: too many matches"), console.log(initialData));
+              newAddress != prevAddress && ($(elem).siblings("[name='address']").val(newAddress), "" === prevAddress && (prevAddress = "blank address"), modified.push(prevAddress));
+              newCity != prevCity && ($(elem).siblings("[name='city']").val(newCity), "" === prevCity && (prevCity = "blank city"), modified.push(prevCity));
+              newPostCode != prevPostCode && ($(elem).siblings("[name='postcode']").val(newPostCode), "" === prevPostCode && (prevPostCode = "blank postal code"), modified.push(prevPostCode));
+              newLat != prevLat && ($(elem).siblings("[name='lat']").val(newLat), "" === prevLat && (prevLat = "blank latitude"), modified.push(prevLat));
+              newLng != prevLng && ($(elem).siblings("[name='lng']").val(newLng), "" === prevLng && (prevLng = "blank longitude"), modified.push(prevLng));
+              newProv != prevProv && ($(elem).siblings("[name='province']").val(newProv), "" === prevProv && (prevProv = "blank province"), modified.push(prevProv));
+              $(elem).siblings("[name='country']").val("Canada");
+              $(elem).closest("td").find("#geoMessage").html("Replaced: " + modified.join(", "));
+            } else {
+              $(elem).closest("td").find("#geoMessage").html("The geotag operation did not reveal new or updated information.");
+              isBatch && $(elem).closest("tr").find(".cmd-cancel").click();
+            }
+          } else {
+            0 === data.length ? ($(elem).siblings("#geoMessage").html("Failed to geocode: no matches!"), console.log(initialData)) : ($(elem).siblings("#geoMessage").html("Failed to geocode: too many matches"), console.log(initialData));
+          }
         } catch (err) {
           $("#errorText").html(err), $("#error-show").click();
         }
@@ -80,7 +95,7 @@ $(function() {
             var newAddress = firstItem.address.houseNumber + " " + firstItem.address.street,
               newCity = firstItem.address.city,
               newPostCode = firstItem.address.postalCode,
-              newProv = "QC", //firstItem.address.stateCode,
+              newProv = "QC",
               newLat = firstItem.position.lat,
               newLng = firstItem.position.lng;
             if ([newAddress, newCity, newPostCode, newLat, newLng, newProv].join(", ") != [prevAddress, prevCity, prevPostCode, prevLat, prevLng, prevProvince].join(", ")) {
@@ -217,7 +232,13 @@ $(function() {
           }
           if (confirm("Would you like to download a file containing these polygons?")) {
             var a = document.createElement("a");
-            a.download = (new Date).toISOString().split("T")[0] + "-geojson-polygons.json", a.href = "data:text/plain;charset=UTF-8," + encodeURIComponent(JSON.stringify(terrGeoJson, null, 2)), a.textContent = "Download JSON", a.id = "polygonDownload", document.body.appendChild(a), $("#polygonDownload").addClass("hide"), $("#polygonDownload")[0].click();
+            a.download = (new Date).toISOString().split("T")[0] + "-geojson-polygons.json";
+            a.href = "data:text/plain;charset=UTF-8," + encodeURIComponent(JSON.stringify(terrGeoJson, null, 2));
+            a.textContent = "Download JSON";
+            a.id = "polygonDownload";
+            document.body.appendChild(a);
+            $("#polygonDownload").addClass("hide");
+            $("#polygonDownload")[0].click();
           }
         }
       });
@@ -245,29 +266,17 @@ $(function() {
       });
       $("html").on("click", "#territory-shame-remove", function() {
         $("#shameContainer, #territory-shame-remove").remove();
-        $("body > *:not(.datepicker):not(script)").show();
+        $(".hidden-programatically").show().removeClass("hidden-programatically");
       });
       $("#territory-shame").click(function() {
-        $("body").append("<div id='shameContainer'></div>");
-        $("#shameContainer").append("<ul id='shame'></ul>");
         createShame();
-        $("body > *").hide();
-        $("#shameContainer").show();
-        $("body").after("<button id='territory-shame-remove'>Back to Assigned</button>");
       });
       $("[name=so]").parent().wrap("<div></div>");
-      $("#view div:first label:first").clone().appendTo($("#view div:first div"));
-      $("[name=av]:not(:first)").attr("name", "od");
-      $("[name=od]").parent().html($("[name=od]").parent().html().replace("Available", "Overdue"));
-      $("#view div:first label:first").clone().insertAfter($("#view div:first label:first"));
-      $("[name=av]:not(:first)").attr("name", "rw");
-      $("[name=rw]").parent().html($("[name=rw]").parent().html().replace("Available", "Completed in the past 6 months"));
-      $("#view div:first label:first").clone().insertAfter($("#view div:first label:first"));
-      $("[name=av]:not(:first)").attr("name", "nm");
-      $("[name=nm]").parent().html($("[name=nm]").parent().html().replace("Available", "Not worked in 6 to 12 months"));
-      $("#view div:first label:first").clone().insertAfter($("#view div:first label:first"));
-      $("[name=av]:not(:first)").attr("name", "nc");
-      $("[name=nc]").parent().html($("[name=nc]").parent().html().replace("Available", "Not worked in over 1 year"));
+      let newElem = $("#view div:first label:first");
+      newElem.clone().insertAfter($("[name=av]").parent()).html(newElem.html().replace("Available", "Not worked in over 1 year")).find("input").attr("name", "nc");
+      newElem.clone().insertAfter($("[name=av]").parent()).html(newElem.html().replace("Available", "Not worked in 6 to 12 months")).find("input").attr("name", "nw");
+      newElem.clone().insertAfter($("[name=av]").parent()).html(newElem.html().replace("Available", "Completed in the past 6 months")).find("input").attr("name", "rw");
+      newElem.clone().appendTo($("#view div:first div")).html(newElem.html().replace("Available", "Overdue")).find("input").attr("name", "od");
       $("[name=av]").on("change", function() {
         $("[name=nc], [name=rw], [name=nm]").prop("disabled", !$(this).prop("checked"));
       });
@@ -288,94 +297,10 @@ $(function() {
                 prevDone && monthsSO <= 6 ? targetElem.closest("tr").addClass("recently-worked") : !prevDone && monthsSO > 3 ? (targetElem.addClass("badge-important"), targetElem.closest("tr").addClass("overdue")) : prevDone && monthsSO > 12 ? targetElem.closest("tr").addClass("over-one-year") : prevDone && monthsSO > 6 && targetElem.closest("tr").addClass("normal");
               } else $node.closest("tr").addClass("over-one-year");
             }), true !== $("[name=av]").prop("disabled"))) {
-              var scriptSrc = String.raw `
-                function recentlyWorked() {
-                    var e = "#777",
-                        v = false;
-                    $(".recently-worked").hide();
-                    if ($("[name=rw]").prop("checked")) {
-                        v = true;
-                        $(".recently-worked").show();
-                    }
-                    $(".recently-worked").each(function() {
-                        var o = $(this).find("td:eq(0)").text().trim();
-                        $(this).find("td:eq(1) .tk1_bg").length || window.polygons[o].setOptions({
-                            fillColor: e,
-                            strokeColor: e,
-                            visible: v
-                        })
-                    })
-                }
-                recentlyWorked(), $("[name=rw]").change(function() {
-                    recentlyWorked()
-                });`;
-              injectScript(scriptSrc, "recently-worked", "body");
-              scriptSrc = String.raw `
-                function overDue() {
-          var e = "#e8c517",
-                        v = false;
-                    $(".overdue").hide();
-                    if ($("[name=od]").prop("checked")) {
-                        v = true;
-                        $(".overdue").show();
-                    }
-                    $(".overdue").each(function() {
-                        var o = $(this).find("td:eq(0)").text().trim();
-                        $(this).find("td:eq(1) .tk1_bg").length || window.polygons[o].setOptions({
-                            fillColor: e,
-                            strokeColor: e,
-                            visible: v
-                        })
-                    })
-                }
-                overDue(), $("[name=od]").change(function () {
-                    overDue()
-                });`;
-              injectScript(scriptSrc, "overdue", "body");
-              scriptSrc = String.raw `
-                function normal() {
-          var /*e = "#ffff00",*/
-                        v = false;
-                    $(".normal").hide();
-                    if ($("[name=nm]").prop("checked")) {
-                        v = true;
-                        $(".normal").show();
-                    }
-                    $(".normal").each(function() {
-                        var o = $(this).find("td:eq(0)").text().trim();
-                        $(this).find("td:eq(1) .tk1_bg").length || window.polygons[o].setOptions({
-                            /*fillColor: e,
-                            strokeColor: e,*/
-                            visible: v
-                        })
-                    })
-                }
-                normal(), $("[name=nm]").change(function () {
-                    normal()
-                });`;
-              injectScript(scriptSrc, "overdue", "body");
-              scriptSrc = String.raw `
-                function neverCompleted() {
-          var e = "#b84747",
-                        v = false;
-                    $(".over-one-year").hide();
-                    if ($("[name=nc]").prop("checked")) {
-                        v = true;
-                        $(".over-one-year").show();
-                    }
-                    $(".over-one-year").each(function() {
-                        var o = $(this).find("td:eq(0)").text().trim();
-                        $(this).find("td:eq(1) .tk1_bg").length || window.polygons[o].setOptions({
-                            fillColor: e,
-                            strokeColor: e,
-                            visible: v
-                        })
-                    })
-                }
-                neverCompleted(), $("[name=nc]").change(function () {
-                    neverCompleted()
-                });`;
-              injectScript(scriptSrc, "never-completed", "body");
+              injectScript(recentlyWorkedScript, "recently-worked", "body");
+              injectScript(normalScript, "normal", "body");
+              injectScript(overdueScript, "overdue", "body");
+              injectScript(neverCompletedScript, "never-completed", "body");
             }
           });
         }),
@@ -398,7 +323,6 @@ $(function() {
         };
       observer.observe(target, config), observer2.observe(target2, config);
     }
-    buildTerritoryAssignmentRecord();
   } else if (curPage.includes("print") || curPage.includes("campaign")) {
     GM_addStyle(".card{max-width:8.25in;margin:0 auto}td.attempts div{height:8px;width:8px;border-color:#777}table tr{height:18px}.attempts{min-width:1px!important}.italic{font-variant:italic}.transparent{color:transparent}.break{display:block}.campaign{letter-spacing:-.5px}.addresses tbody td{white-space:nowrap;vertical-align:middle}img.map{width:4in!important;height:4in!important}.marker{width:12px!important;text-align:center!important;padding:1px 0 0!important}p.print-notes{padding:1em;border-style:solid;display:inline-block;border-radius:1em;margin-bottom:10pt;margin-right:0}.st1_bg{background-color:#66d2ff!important;color:#000!important}.st2_bg{background-color:#52d965!important;color:#000!important}.st6_bg{background-color:#ccc!important;color:#fff!important}.white-bg{background-color:#fff!important}.returnDate{padding:.5em 2.5em .5em 1.5em;border-radius:0 0 1em 0;display:inline-block;-webkit-print-color-adjust:exact;background:#ffab91;position:absolute}.returnDateString{font-weight:700}.group{display:inline-block;padding:.5em 1.5em .5em 2.5em;border-radius:0 0 0 1em;float:left}.group-name{font-weight:700}.directions{margin-top:10pt!important}a.directions,h1{margin-top:3em!important}.group-ls{background:#e1bee7}//purple 1 .group-lc{background:#aed581}//green 3 .group-kh{background:#80cbc4}//turquoise 2 .group-pf{background:#ffe082}// yellow 2 .strike{text-decoration:line-through}.instructions{font-size:90%;line-height:normal}.instructionsRU{font-size:100%;margin-top:2em}.langRU{column-count:2;list-style-position:inside}.phoneEntries{font-size:90%}.campaignHeader{margin:0 0 10pt}.doNotCallBadge{background-color:#444!important;color:#fff!important}.sizeToggle{position:absolute;left:50%;transform:translateX(-50%);top:1%;background:rgba(255,255,255,.9);border:2px #000 solid;border-radius:1em;padding:1em;z-index:99}.sizeToggle ul{padding:0;margin-bottom:0}.sizeToggle ul li{list-style-type:none}#mqMe{margin-left:1em}.label-language{border:1px solid rgba(0,0,0,.4);color:#000!important;font-size:90%!important;margin:0 .5em}#pageLine{border-top:2px solid #ccc;width:100%;position:absolute;top:10.15in;right:0}#transferDiv span.label{width:15em}#transferDiv textarea{width:30em;height:10em}@media print{.sizeToggle{display:none!important}#pageLine{display:none!important}}");
     $("p").addClass("instructions"), $("small.muted, .overview, h1 span.muted,span.badge").hide();
@@ -541,16 +465,14 @@ $(function() {
     $("table:eq(0), div:eq(0), h1:eq(0)").addClass("main"), $("body").prepend("<button id='printTAR' disabled='disabled'>Print TAR</button>"), $("body").prepend("<button id='hideTAR' style='display: none;'>Back</button>");
     var currentStatuses = {},
       currentlySignedOut = {},
-      retrievedSignedOutSpreadsheet = {},
-      territoryAssignmentRecord = {},
-      //    congregation = $("h1.main span.muted").text(),
       areas = [];
     $("#printTAR").click(function() {
-      printTar();
-    }), $("table.main").after("<div id='terrs' style='display:none'>");
+      $("#terrs, .chart.fullpage, .main").toggle();
+    });
+    $("table.main").after("<div id='terrs' style='display:none'>");
     getCurrentStatuses();
     makeCharts();
-    enableDisplayButton();
+    $("#printTAR").prop("disabled", false);
   }
 
   function areaEnumerate() {
@@ -574,7 +496,6 @@ $(function() {
       1 == subareas[v].length ? subareas[v] = "<span class='label label-success'>" + subareas[v][0] + "</span>" : subareas[v] = "<span class='label label-important'>" + subareas[v].join("</span> <span class='label label-important'>") + "</span>", v.toUpperCase() !== v || /^[0-9.]+$/.test(v) ? delete subareas[v] : output += "<li><span class='label' style='background-color: " + colors[subareaParents[v]] + "'>" + v + "</span> - " + subareas[v] + " <span class='label'>" + subareaPopulations[v] + "</span></li>\n";
     }), output += "</ul></p>", $("#areasText").html(output);
   }
-
   function createList() {
     $("#individualTerritories")
       .html($("td.territory:visible")
@@ -621,34 +542,43 @@ $(function() {
       .html(text);
   }
   function createShame() {
+    $("body").append("<div id='shameContainer'></div>");
+    $("#shameContainer").append("<ul id='shame'></ul>");
     var myTableArray = [];
-    $("#territories tr")
-      .each(function() {
-        var arrayOfThisRow = [],
-          tableData = $(this)
-            .find("td");
-        tableData.length > 0 && (tableData.each(function(i) {
-          4 !== i && 3 !== i && 8 !== i && (1 == i || 6 == i ? arrayOfThisRow.push($(this)
-            .html()) : arrayOfThisRow.push($(this)
-            .text()));
-        }), myTableArray.push(arrayOfThisRow));
-      });
+    $("#territories tr").each(function() {
+      var arrayOfThisRow = [],
+        tableData = $(this).find("td");
+      tableData.length > 0 && (tableData.each(function(i) {
+        4 !== i && 3 !== i && 8 !== i && (1 == i || 6 == i ? arrayOfThisRow.push($(this).html()) : arrayOfThisRow.push($(this).text()));
+      }), myTableArray.push(arrayOfThisRow));
+    });
     var terrsPerPerson = {};
     $.each(myTableArray, function(i, v) {
-      "Signed-out" == v[3] && (v.push(v[4].split("</strong>")[1].replace(/<(?:.|\n)*?>/gm, "")), v[4] = v[4].split("</strong>")[0].replace(/<(?:.|\n)*?>/gm, ""), v.push(v[1].split("</b>")[1].replace(/<(?:.|\n)*?>/gm, "")
-        .replace(" &nbsp; Assigned (no border)", "")), v[1] = v[1].split("</b>")[0].replace(/<(?:.|\n)*?>/gm, ""), void 0 === terrsPerPerson[v[4]] && (terrsPerPerson[v[4]] = []), terrsPerPerson[v[4]].push([v[1], v[6]]));
+      "Signed-out" == v[3] && (v.push(v[4].split("</strong>")[1].replace(/<(?:.|\n)*?>/gm, "")), v[4] = v[4].split("</strong>")[0].replace(/<(?:.|\n)*?>/gm, ""), v.push(v[1].split("</b>")[1].replace(/<(?:.|\n)*?>/gm, "").replace(" &nbsp; Assigned (no border)", "")), v[1] = v[1].split("</b>")[0].replace(/<(?:.|\n)*?>/gm, ""), void 0 === terrsPerPerson[v[4]] && (terrsPerPerson[v[4]] = []), terrsPerPerson[v[4]].push([v[1], v[6]]));
     });
     var formattedTerrsPerPerson = "";
-    $.each(Object.keys(terrsPerPerson)
-      .sort(),
-    function(k, v) {
-      formattedTerrsPerPerson += "<li><div class='name'>" + v + "</div>\n<ul class='terrs'>\n", $.each(terrsPerPerson[v], function(k, v) {
+    $.each(Object.keys(terrsPerPerson).sort(), function(k, v) {
+      formattedTerrsPerPerson += "<li><div class='name'>" + v + "</div>\n<ul class='terrs'>\n";
+      $.each(terrsPerPerson[v], function(k, v) {
         var terDate = new Date(v[1]),
           timeOut = (new Date - terDate) / 1e3 / 60 / 60 / 24 / 30.4375;
         formattedTerrsPerPerson += "<li" + (timeOut > 4 ? " class='overdue'" : "") + ">" + v[0] + "</li>\n";
-      }), formattedTerrsPerPerson += "</ul>\n", formattedTerrsPerPerson += "<span class='bold smaller'>Пожалуйста, обратите внимание:</span><ul class='smaller'>", formattedTerrsPerPerson += "<li>Если перед территорией есть зеленая точка, еще есть время ее закончить. Нет необходимости сразу ее возвращать.</li>", formattedTerrsPerPerson += "<li>Если перед территорией есть красная точка, она просрочена. Пожалуйста, верните брату территорию как можно скорее.</li>", formattedTerrsPerPerson += "</ul>", formattedTerrsPerPerson += "<span class='bold smaller'>Please note:</span><ul class='smaller'>", formattedTerrsPerPerson += "<li>If a territory is preceded by a green bullet point, it is not overdue. You may continue to work it.</li>", formattedTerrsPerPerson += "<li>If a territory is preceded by a red bullet point, it is overdue. Please hand it in as soon as possible.</li>", formattedTerrsPerPerson += "</ul>", formattedTerrsPerPerson += "</li>\n";
-    }), $("#shame")
-      .html(formattedTerrsPerPerson);
+      });
+      formattedTerrsPerPerson += "</ul>\n";
+      formattedTerrsPerPerson += "<span class='bold smaller'>Пожалуйста, обратите внимание:</span><ul class='smaller'>";
+      formattedTerrsPerPerson += "<li>Если перед территорией есть зеленая точка, еще есть время ее закончить. Нет необходимости сразу ее возвращать.</li>";
+      formattedTerrsPerPerson += "<li>Если перед территорией есть красная точка, она просрочена. Пожалуйста, верните брату территорию как можно скорее.</li>";
+      formattedTerrsPerPerson += "</ul>";
+      formattedTerrsPerPerson += "<span class='bold smaller'>Please note:</span><ul class='smaller'>";
+      formattedTerrsPerPerson += "<li>If a territory is preceded by a green bullet point, it is not overdue. You may continue to work it.</li>";
+      formattedTerrsPerPerson += "<li>If a territory is preceded by a red bullet point, it is overdue. Please hand it in as soon as possible.</li>";
+      formattedTerrsPerPerson += "</ul>";
+      formattedTerrsPerPerson += "</li>\n";
+    });
+    $("#shame").html(formattedTerrsPerPerson);
+    $("body > *:visible").addClass("hidden-programatically").hide();
+    $("#shameContainer").show();
+    $("body").after("<button id='territory-shame-remove'>Back to Assigned</button>");
   }
   function createLinks() {
     var myTableArray = [];
@@ -717,76 +647,11 @@ $(function() {
         dateactual: dateActual,
         publisher: row.find("td:nth-child(5) strong").text().trim()
       });
-    }), Object.keys(currentStatuses).filter(function(key) {
+    });
+    Object.keys(currentStatuses).filter(function(key) {
       if (!currentStatuses[key].datesignedout.includes("Never")) return currentStatuses[key].publisher.includes("Printed") && (currentStatuses[key].publisher = "Publisher"), currentlySignedOut[key] = currentStatuses[key], key;
     });
   }
-
-  function buildTerritoryAssignmentRecord() {
-    for (var terrNo in currentStatuses)
-      if (!currentStatuses[terrNo].desc.includes("phone") && !currentStatuses[terrNo].desc.includes("Border") && "Wow" != currentStatuses[terrNo].code && (territoryAssignmentRecord[terrNo] || (territoryAssignmentRecord[terrNo] = []), retrievedSignedOutSpreadsheet[terrNo])) {
-        let terr = retrievedSignedOutSpreadsheet[terrNo];
-        for (var terrHistory in terr) {
-          var terrHistoryEntry = terr[terrHistory];
-          if (0 == territoryAssignmentRecord[terrNo].length) "Signed-out" == terrHistoryEntry.status ? territoryAssignmentRecord[terrNo].push(terrHistoryEntry) : console.log("ANOMALY: ", terrHistoryEntry.id, terrHistoryEntry.code, terrHistoryEntry.datesignedout, terrHistoryEntry.datesignedin, terrHistoryEntry.publisher, terrHistoryEntry.status);
-          else {
-            var prevHistEntry = territoryAssignmentRecord[terrNo].slice(-1)[0];
-            "Signed-out" == prevHistEntry.status ? "Available" == terrHistoryEntry.status && (prevHistEntry.status = "Signed back in", prevHistEntry.datesignedin = terrHistoryEntry.datesignedout) : "Signed-out" == terrHistoryEntry.status ? territoryAssignmentRecord[terrNo].push(terrHistoryEntry) : (console.log("ANOMALY PREV: ", prevHistEntry.id, prevHistEntry.code, prevHistEntry.datesignedout, prevHistEntry.datesignedin, prevHistEntry.publisher, prevHistEntry.status), console.log("ANOMALY CURR: ", terrHistoryEntry.id, terrHistoryEntry.code, terrHistoryEntry.datesignedout, terrHistoryEntry.datesignedin, terrHistoryEntry.publisher, terrHistoryEntry.status));
-          }
-        }
-      } var tarHtml = "";
-    for (let terr in territoryAssignmentRecord) {
-      tarHtml += "<div class='terr'><div class='terrNameRow'><span class='terrName'><span class='terrLabel'>Terr.<br/>No.</span><span class='terrNo'>" + terr + "</span></span></div>";
-      var numEntries = Object.values(territoryAssignmentRecord[terr]).length;
-      for (territoryAssignmentRecord[terr].forEach(function(elem) {
-        var dateOut = elem.datesignedout ? new Date(elem.datesignedout).toISOString().slice(0, 10) : "",
-          dateIn = elem.datesignedin ? new Date(elem.datesignedin).toISOString().slice(0, 10) : "";
-        tarHtml += "<div class='terrPub'><span>" + elem.publisher + "</span></div>", tarHtml += "<div class='terrDate'><div class='dateOut'>" + dateOut + "</div><div class='dateIn'>" + dateIn + "</div></div>";
-      }); numEntries < 12; numEntries++) tarHtml += "<div class='terrPub empty'><span></span></div>", tarHtml += "<div class='terrDate empty'><div class='dateOut'></div><div class='dateIn'></div></div>";
-      tarHtml += "</div>";
-    }
-    $("#terrs").append(tarHtml);
-  }
-
-  // function getStatusHistory() {
-  //   $.getJSON("https://spreadsheets.google.com/feeds/list/1HgHkhx7AkZ8iQx5ICPcMDsf1wZW_7D7KBj__Eg1UVEU/default/public/values?alt=json", function(data) {
-  //     if (data.feed.entry)
-  //       for (var row in data.feed.entry)
-  //         if (rowData = data.feed.entry[row], congregation == rowData.gsx$congregation.$t) {
-  //           var id = rowData.gsx$id.$t,
-  //             code = rowData.gsx$territorycode.$t;
-  //           retrievedSignedOutSpreadsheet[code] || (retrievedSignedOutSpreadsheet[code] = []), retrievedSignedOutSpreadsheet[code].push({
-  //             id: id,
-  //             code: code,
-  //             publisher: rowData.gsx$signedoutto.$t,
-  //             status: rowData.gsx$status.$t,
-  //             datesignedout: rowData.gsx$date.$t
-  //           });
-  //         } compareRetrievedAndCurrentHistory();
-  //   });
-  // }
-  // var totalToUpdate = 0;
-
-  // function toUpdate(num) {
-  //   (totalToUpdate += parseInt(num)) > 0 ? $("#updateStatus").html("Updates submitted: " + totalToUpdate) : $("#updateStatus").html("Sign-out history up to date.").delay(2e3).fadeOut(500);
-  // }
-  //
-  // function updateHistory(element) {
-  //   var url = "https://docs.google.com/forms/d/e/1FAIpQLSfuKMhGFNx99lRMhBeGT38g_0CJDd0D5JxAFxW53N1JD7G0fA/formResponse?";
-  //   url += "entry.1317884980=" + element.datesignedout, url += "&entry.1034074982=" + element.id, url += "&entry.1657743289=" + element.code, url += "&entry.1862622033=" + element.desc, url += "&entry.853264099=" + element.status, url += "&entry.502204457=" + element.publisher, url += "&entry.407328389=" + congregation, $.get(url, function() {
-  //     console.log(element.id, "Update complete"), toUpdate(-1);
-  //   });
-  // }
-
-  // function compareRetrievedAndCurrentHistory() {
-  //   for (var el in currentlySignedOut) {
-  //     var currentEntry = currentlySignedOut[el],
-  //       lastEntry = {};
-  //     if (retrievedSignedOutSpreadsheet[el]) lastEntry = retrievedSignedOutSpreadsheet[el].slice(-1)[0];
-  //     currentEntry.datesignedout == lastEntry.datesignedout && currentEntry.publisher == lastEntry.publisher && currentEntry.status == lastEntry.status || (toUpdate(1), retrievedSignedOutSpreadsheet[el] || (retrievedSignedOutSpreadsheet[el] = []), retrievedSignedOutSpreadsheet[el].push(currentEntry), updateHistory(currentEntry), console.log("PENDING UPDATE: ", currentEntry));
-  //   }
-  //   toUpdate(0);
-  // }
 
   function makeCharts() {
     var terrCoverageInfo = {},
@@ -912,12 +777,89 @@ $(function() {
       options: charts[areas[area] + "Coverage"].options
     });
   }
-
-  function enableDisplayButton() {
-    $("#printTAR").prop("disabled", !1);
-  }
-
-  function printTar() {
-    $("#terrs, .chart.fullpage, .main").toggle();
-  }
 });
+
+var neverCompletedScript = String.raw `
+  function neverCompleted() {
+var e = "#b84747",
+          v = false;
+      $(".over-one-year").hide();
+      if ($("[name=nc]").prop("checked")) {
+          v = true;
+          $(".over-one-year").show();
+      }
+      $(".over-one-year").each(function() {
+          var o = $(this).find("td:eq(0)").text().trim();
+          $(this).find("td:eq(1) .tk1_bg").length || window.polygons[o].setOptions({
+              fillColor: e,
+              strokeColor: e,
+              visible: v
+          })
+      })
+  }
+  neverCompleted(), $("[name=nc]").change(function () {
+      neverCompleted()
+  });`,
+  normalScript = String.raw `
+    function normal() {
+var /*e = "#ffff00",*/
+            v = false;
+        $(".normal").hide();
+        if ($("[name=nm]").prop("checked")) {
+            v = true;
+            $(".normal").show();
+        }
+        $(".normal").each(function() {
+            var o = $(this).find("td:eq(0)").text().trim();
+            $(this).find("td:eq(1) .tk1_bg").length || window.polygons[o].setOptions({
+                /*fillColor: e,
+                strokeColor: e,*/
+                visible: v
+            })
+        })
+    }
+    normal(), $("[name=nm]").change(function () {
+        normal()
+    });`,
+  recentlyWorkedScript = String.raw `
+      function recentlyWorked() {
+          var e = "#777",
+              v = false;
+          $(".recently-worked").hide();
+          if ($("[name=rw]").prop("checked")) {
+              v = true;
+              $(".recently-worked").show();
+          }
+          $(".recently-worked").each(function() {
+              var o = $(this).find("td:eq(0)").text().trim();
+              $(this).find("td:eq(1) .tk1_bg").length || window.polygons[o].setOptions({
+                  fillColor: e,
+                  strokeColor: e,
+                  visible: v
+              })
+          })
+      }
+      recentlyWorked(), $("[name=rw]").change(function() {
+          recentlyWorked()
+      });`,
+  overdueScript = String.raw `
+        function overDue() {
+  var e = "#e8c517",
+                v = false;
+            $(".overdue").hide();
+            if ($("[name=od]").prop("checked")) {
+                v = true;
+                $(".overdue").show();
+            }
+            $(".overdue").each(function() {
+                var o = $(this).find("td:eq(0)").text().trim();
+                $(this).find("td:eq(1) .tk1_bg").length || window.polygons[o].setOptions({
+                    fillColor: e,
+                    strokeColor: e,
+                    visible: v
+                })
+            })
+        }
+        overDue(), $("[name=od]").change(function () {
+            overDue()
+        });`;

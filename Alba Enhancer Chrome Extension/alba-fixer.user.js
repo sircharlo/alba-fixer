@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Alba - Territories
-// @version      0.1.3
-// @description  Fixes for Alba
+// @name         Alba Enhancer
+// @version      0.1.4
+// @description  Utilities and fixes for Alba
 // @author       SirCharlo
 // @match        https://www.mcmxiv.com/alba/*
 // @require      https://code.jquery.com/jquery-3.6.0.min.js
@@ -324,7 +324,7 @@ $(function() {
       observer.observe(target, config), observer2.observe(target2, config);
     }
   } else if (curPage.includes("print") || curPage.includes("campaign")) {
-    GM_addStyle(".card{max-width:8.25in;margin:0 auto}td.attempts div{height:8px;width:8px;border-color:#777}table tr{height:18px}.attempts{min-width:1px!important}.italic{font-variant:italic}.transparent{color:transparent}.break{display:block}.campaign{letter-spacing:-.5px}.addresses tbody td{white-space:nowrap;vertical-align:middle}img.map{width:4in!important;height:4in!important}.marker{width:12px!important;text-align:center!important;padding:1px 0 0!important}p.print-notes{padding:1em;border-style:solid;display:inline-block;border-radius:1em;margin-bottom:10pt;margin-right:0}.st1_bg{background-color:#66d2ff!important;color:#000!important}.st2_bg{background-color:#52d965!important;color:#000!important}.st6_bg{background-color:#ccc!important;color:#fff!important}.white-bg{background-color:#fff!important}.returnDate{padding:.5em 2.5em .5em 1.5em;border-radius:0 0 1em 0;display:inline-block;-webkit-print-color-adjust:exact;background:#ffab91;position:absolute}.returnDateString{font-weight:700}.group{display:inline-block;padding:.5em 1.5em .5em 2.5em;border-radius:0 0 0 1em;float:left}.group-name{font-weight:700}.directions{margin-top:10pt!important}a.directions,h1{margin-top:3em!important}.group-ls{background:#e1bee7}//purple 1 .group-lc{background:#aed581}//green 3 .group-kh{background:#80cbc4}//turquoise 2 .group-pf{background:#ffe082}// yellow 2 .strike{text-decoration:line-through}.instructions{font-size:90%;line-height:normal}.instructionsRU{font-size:100%;margin-top:2em}.langRU{column-count:2;list-style-position:inside}.phoneEntries{font-size:90%}.campaignHeader{margin:0 0 10pt}.doNotCallBadge{background-color:#444!important;color:#fff!important}.sizeToggle{position:absolute;left:50%;transform:translateX(-50%);top:1%;background:rgba(255,255,255,.9);border:2px #000 solid;border-radius:1em;padding:1em;z-index:99}.sizeToggle ul{padding:0;margin-bottom:0}.sizeToggle ul li{list-style-type:none}#mqMe{margin-left:1em}.label-language{border:1px solid rgba(0,0,0,.4);color:#000!important;font-size:90%!important;margin:0 .5em}#pageLine{border-top:2px solid #ccc;width:100%;position:absolute;top:10.15in;right:0}#transferDiv span.label{width:15em}#transferDiv textarea{width:30em;height:10em}@media print{.sizeToggle{display:none!important}#pageLine{display:none!important}}");
+    GM_addStyle("table th, table td{padding: 2pt 0pt;},.card{max-width:8.25in;margin:0 auto}td.attempts div{height:8px;width:8px;border-color:#777}table tr{height:18px}.attempts{min-width:1px!important}.italic{font-variant:italic}.transparent{color:transparent}.break{display:block}.campaign{letter-spacing:-.5px}.addresses tbody td{white-space:nowrap;vertical-align:middle}img.map{width:4in!important;height:4in!important}.marker{width:12px!important;text-align:center!important;padding:1px 0 0!important}p.print-notes{padding:1em;border-style:solid;display:inline-block;border-radius:1em;margin-bottom:10pt;margin-right:0}.st1_bg{background-color:#66d2ff!important;color:#000!important}.st2_bg{background-color:#52d965!important;color:#000!important}.st6_bg{background-color:#ccc!important;color:#fff!important}.white-bg{background-color:#fff!important}.returnDate{padding:.5em 2.5em .5em 1.5em;border-radius:0 0 1em 0;display:inline-block;-webkit-print-color-adjust:exact;background:#ffab91;position:absolute}.returnDateString{font-weight:700}.group{display:inline-block;padding:.5em 1.5em .5em 2.5em;border-radius:0 0 0 1em;float:left}.group-name{font-weight:700}.directions{margin-top:10pt!important}a.directions,h1{margin-top:3em!important}.group-ls{background:#e1bee7}//purple 1 .group-lc{background:#aed581}//green 3 .group-kh{background:#80cbc4}//turquoise 2 .group-pf{background:#ffe082}// yellow 2 .strike{text-decoration:line-through}.instructions{font-size:90%;line-height:normal}.instructionsRU{font-size:100%;margin-top:2em}.langRU{column-count:2;list-style-position:inside}.phoneEntries{font-size:90%}.campaignHeader{margin:0 0 10pt}.doNotCallBadge{background-color:#444!important;color:#fff!important}.sizeToggle{position:absolute;left:50%;transform:translateX(-50%);top:1%;background:rgba(255,255,255,.9);border:2px #000 solid;border-radius:1em;padding:1em;z-index:99}.sizeToggle ul{padding:0;margin-bottom:0}.sizeToggle ul li{list-style-type:none}#mqMe{margin-left:1em}.label-language{border:1px solid rgba(0,0,0,.4);color:#000!important;font-size:90%!important;margin:0 .5em}#pageLine{border-top:2px solid #ccc;width:100%;position:absolute;top:10.15in;right:0}#transferDiv span.label{width:15em}#transferDiv textarea{width:30em;height:10em}@media print{.sizeToggle{display:none!important}#pageLine{display:none!important}}");
     $("p").addClass("instructions"), $("small.muted, .overview, h1 span.muted,span.badge").hide();
     $(".addresses tr").each(function() {
       $(this).find("td:nth-child(3), th:nth-child(3)").insertAfter($(this).find("td:nth-child(6), th:nth-child(6)"));
@@ -416,7 +416,7 @@ $(function() {
         }
         $(".sizeToggle").append("<select id='mapZoom'>"), $("#mapZoom").append("<option value=''>Auto</option>");
         for (i = 1; i <= 20; i++) $(".sizeToggle #mapZoom").append("<option value='" + i + "'>" + i + "</option>>");
-        $(".sizeToggle #mqMe").after("<ul id='options'><li id='phonesSeparateLines'><input type='checkbox' /> Telephone numbers on separate lines</li></ul>"), $(".sizeToggle #phonesSeparateLines").after("<li id='displayRussian'><input type='checkbox' /> Display <strong>Russian</strong> in the Language column</li>");
+        $(".sizeToggle #mqMe");
         var mapquestUrl = "https://www.mapquestapi.com/staticmap/v5/map?size=500,500@2x&zoom=&declutter=true&key=" + mapquestAPIKey + "&locations=",
           pins = {},
           syntheticPin = 10;
@@ -446,13 +446,10 @@ $(function() {
           var zoom = $(this).val(),
             src = $(".map").prop("src");
           $(".map").prop("src", src.replace(/zoom=[\d]*/g, "zoom=" + zoom));
-        }), $(this).find(".sizeToggle #phonesSeparateLines input").click(function() {
-          $("span.break").length ? $("span.nw").removeClass("break") : $("span.nw").addClass("break").next("br").remove();
-        }), $(".addresses tbody tr td:nth-child(6):contains(Russian)").removeClass("muted").addClass("transparent"), $(this).find(".sizeToggle #displayRussian input").click(function() {
-          $(".transparent").length ? $(".addresses tbody tr td:nth-child(6):contains(Russian)").addClass("muted").removeClass("transparent") : $(".addresses tbody tr td:nth-child(6):contains(Russian)").removeClass("muted").addClass("transparent");
         });
+        $(".addresses tbody tr td:nth-child(6):contains(Russian)").removeClass("muted").addClass("transparent");
+        window.print();
       }
-      $(this).find(".sizeToggle #displayRussian input").click();
       var statuses = [];
       $(this).find(".addresses tbody tr").each(function() {
         var status = $(this).find("td:nth-child(2)").text().trim(); - 1 === statuses.indexOf(status) && statuses.push(status);
@@ -652,7 +649,6 @@ $(function() {
       if (!currentStatuses[key].datesignedout.includes("Never")) return currentStatuses[key].publisher.includes("Printed") && (currentStatuses[key].publisher = "Publisher"), currentlySignedOut[key] = currentStatuses[key], key;
     });
   }
-
   function makeCharts() {
     var terrCoverageInfo = {},
       now = new Date,

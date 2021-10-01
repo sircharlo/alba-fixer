@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Alba Enhancer
-// @version      0.1.4
+// @version      0.1.5
 // @description  Utilities and fixes for Alba
 // @author       SirCharlo
 // @match        https://www.mcmxiv.com/alba/*
@@ -365,9 +365,10 @@ $(function() {
           $(this).find("td:nth-child(6) span.label-language:nth-child(n+4):nth-child(-n+7)").addClass("st0_bg_f");
           $(this).find("td:nth-child(6) span.label-language:nth-child(8)").addClass("white-bg");
           $(this).find("th:nth-child(6)").css("text-align", "center");
-          $(this).find("td.attempts").insertAfter($(this).find("td:nth-child(1)"));
+          $(this).append($(this).find("td.attempts"));
           $(this).find("th:nth-child(7)").insertAfter($(this).find("th:nth-child(1)"));
         });
+        $(".addresses thead").hide();
         $("p:contains(addresses) > strong").html($("p:contains(addresses) > strong").html().replace(/addresses/i, "numbers"));
         $(".addresses").tablesorter({
           sortList: [[3, 0]]

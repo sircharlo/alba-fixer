@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Alba Enhancer
-// @version      0.1.5
+// @version      0.1.6
 // @description  Utilities and fixes for Alba
 // @author       SirCharlo
 // @match        https://www.mcmxiv.com/alba/*
@@ -449,6 +449,7 @@ $(function() {
           $(".map").prop("src", src.replace(/zoom=[\d]*/g, "zoom=" + zoom));
         });
         $(".addresses tbody tr td:nth-child(6):contains(Russian)").removeClass("muted").addClass("transparent");
+        if (window.location.href.includes("st=1,2,3")) window.location.href = window.location.href.replace("st=1,2,3", "st=1,2");
         window.print();
       }
       var statuses = [];

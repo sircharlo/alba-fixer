@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Alba Enhancer
-// @version      0.1.7
+// @version      0.1.8
 // @description  Utilities and fixes for Alba
 // @author       SirCharlo
 // @match        https://www.mcmxiv.com/alba/*

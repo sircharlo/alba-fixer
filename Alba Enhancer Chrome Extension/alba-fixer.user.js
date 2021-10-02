@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Alba Enhancer
-// @version      0.1.6
+// @version      0.1.7
 // @description  Utilities and fixes for Alba
 // @author       SirCharlo
 // @match        https://www.mcmxiv.com/alba/*
@@ -282,6 +282,12 @@ $(function() {
       });
       $("[name=so]").on("change", function() {
         $("[name=od]").prop("disabled", !$(this).prop("checked"));
+      });
+      $("#territories").on("click", "a.btn.btn-small.dropdown-toggle", function() {
+        let isTel = $(this).closest("tr").find("td.territory b").text().toLowerCase().includes("tel-");
+        let mobileLink = $(this).closest("tr").find("a.cmd-open");
+        mobileLink.toggleClass("disabled", !isTel);
+        mobileLink.css("pointer-events", (!isTel ? "none" : ""));
       });
       let target = $("#territories")[0],
         observer = new MutationObserver(function(mutations) {

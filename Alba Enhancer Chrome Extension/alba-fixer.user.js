@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Alba Enhancer
-// @version      0.1.8
+// @version      0.1.9
 // @description  Utilities and fixes for Alba
 // @author       SirCharlo
 // @match        https://www.mcmxiv.com/alba/*
@@ -273,7 +273,7 @@ $(function() {
       });
       $("#territories").on("click", "a.btn.btn-small.dropdown-toggle", function() {
         let isTel = $(this).closest("tr").find("td.territory b").text().toLowerCase().includes("tel-");
-        let mobileLink = $(this).closest("tr").find("a.cmd-open");
+        let mobileLink = $(this).closest("tr").find("a.cmd-open[rel*=mobile]");
         mobileLink.toggleClass("disabled", !isTel);
         mobileLink.css("pointer-events", (!isTel ? "none" : ""));
       });
@@ -567,12 +567,6 @@ $(function() {
     }), $("#links")
       .html(formattedTerrsPerPerson);
   }
-  function injectScript(content, id, tag) {
-    $("script#" + id).remove();
-    var node = document.getElementsByTagName(tag)[0],
-      script = document.createElement("script");
-    script.setAttribute("type", "text/javascript"), script.innerHTML = content, script.id = id, node.appendChild(script);
-  }
   function rgb2hex(rgb) {
     return (rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i)) && 4 === rgb.length ? ("0" + parseInt(rgb[1], 10).toString(16)).slice(-2) + ("0" + parseInt(rgb[2], 10).toString(16)).slice(-2) + ("0" + parseInt(rgb[3], 10).toString(16)).slice(-2) : "";
   }
@@ -731,88 +725,3 @@ $(function() {
     });
   }
 });
-
-var neverCompletedScript = String.raw `
-  function neverCompleted() {
-var e = "#b84747",
-          v = false;
-      $(".over-one-year").hide();
-      if ($("[name=nc]").prop("checked")) {
-          v = true;
-          $(".over-one-year").show();
-      }
-      $(".over-one-year").each(function() {
-          var o = $(this).find("td:eq(0)").text().trim();
-          $(this).find("td:eq(1) .tk1_bg").length || window.polygons[o].setOptions({
-              fillColor: e,
-              strokeColor: e,
-              visible: v
-          })
-      })
-  }
-  neverCompleted(), $("[name=nc]").change(function () {
-      neverCompleted()
-  });`,
-  normalScript = String.raw `
-    function normal() {
-var /*e = "#ffff00",*/
-            v = false;
-        $(".normal").hide();
-        if ($("[name=nm]").prop("checked")) {
-            v = true;
-            $(".normal").show();
-        }
-        $(".normal").each(function() {
-            var o = $(this).find("td:eq(0)").text().trim();
-            $(this).find("td:eq(1) .tk1_bg").length || window.polygons[o].setOptions({
-                /*fillColor: e,
-                strokeColor: e,*/
-                visible: v
-            })
-        })
-    }
-    normal(), $("[name=nm]").change(function () {
-        normal()
-    });`,
-  recentlyWorkedScript = String.raw `
-      function recentlyWorked() {
-          var e = "#777",
-              v = false;
-          $(".recently-worked").hide();
-          if ($("[name=rw]").prop("checked")) {
-              v = true;
-              $(".recently-worked").show();
-          }
-          $(".recently-worked").each(function() {
-              var o = $(this).find("td:eq(0)").text().trim();
-              $(this).find("td:eq(1) .tk1_bg").length || window.polygons[o].setOptions({
-                  fillColor: e,
-                  strokeColor: e,
-                  visible: v
-              })
-          })
-      }
-      recentlyWorked(), $("[name=rw]").change(function() {
-          recentlyWorked()
-      });`,
-  overdueScript = String.raw `
-        function overDue() {
-  var e = "#e8c517",
-                v = false;
-            $(".overdue").hide();
-            if ($("[name=od]").prop("checked")) {
-                v = true;
-                $(".overdue").show();
-            }
-            $(".overdue").each(function() {
-                var o = $(this).find("td:eq(0)").text().trim();
-                $(this).find("td:eq(1) .tk1_bg").length || window.polygons[o].setOptions({
-                    fillColor: e,
-                    strokeColor: e,
-                    visible: v
-                })
-            })
-        }
-        overDue(), $("[name=od]").change(function () {
-            overDue()
-        });`;

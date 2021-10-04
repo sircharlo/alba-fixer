@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Alba Enhancer
-// @version      0.1.10
+// @version      0.1.11
 // @description  Utilities and fixes for Alba
 // @author       SirCharlo
 // @match        https://www.mcmxiv.com/alba/*
@@ -16,7 +16,7 @@ $(function() {
   var colors = ["#b71c1c", "#880e4f", "#4a148c", "#0d47a1", "#006064", "#1b5e20", "#827717", "#ff6f00", "#212121", "#b71c1c", "#880e4f", "#4a148c", "#0d47a1", "#006064", "#1b5e20", "#827717", "#ff6f00", "#212121"],
     hereAPIKey = "aXUToJoWnlgv0zCAgupM7ukogmefDriDS2ZcQroT8Ps",
     mapquestAPIKey = "cWthMOAPfdye1t02NcpkzD30NVLfhNy6";
-  GM_addStyle(".disabled a{pointer-events:none} li.dropdown.admin{padding-top:4px}");
+  GM_addStyle(".disabled a{pointer-events:none} li.dropdown.admin{padding-top:4px} .modal-backdrop {z-index: 24000} .modal {z-index: 25000}");
   $("ul.pull-right li.dropdown").last().find("a").first().find(".muted").hide();
   $("ul.nav:not(.pull-right) > li").each(function() {
     $(this).find("span").text($(this).find("span").text().replace(String.fromCharCode(160) + String.fromCharCode(160) + "Users", "").replace(String.fromCharCode(160) + String.fromCharCode(160) + "Account", ""));
@@ -128,7 +128,7 @@ $(function() {
     $("td.person small.tt").each(function() {
       $(this).html($(this).html() + ": " + $(this).data("original-title").split(" by ")[1].match(/\b(\w)/g).join(""));
     });
-    $("li.visible-desktop").after("<li class='dropdown admin'><button id='dropdown-admin' class='btn btn-lg btn-danger' data-toggle='dropdown'>Admin</button><ul class='dropdown-menu'><li><a id='select-all'>Open all entries for editing</a></li><li class='divider'></li><li><a id='bing-all'>Correct opened addresses using Bing</a></li><li><a id='osm-all'>Correct opened addresses using OSM</a></li><li><a id='massive-change' href='#massiveChange' data-toggle='modal'>Batch edit fields in opened entries</a></li><li><a id='search-replace'>Search and replace in all opened entries</a></li><li class='divider'></li><li><a id='save-all'>Save all opened entries</a></li><li><a id='delete-all'>Delete all opened entries</a></li><li><a id='cancel-all'>Cancel all modifications</a></li></ul></li><button id='error-show' href='#errorMessage' class='hide' data-toggle='modal'>Error</button><button id='delete-show' href='#deleteMessage' class='hide' data-toggle='modal'>Error</button>");
+    $("li.visible-desktop").after("<li class='dropdown admin'><button id='dropdown-admin' class='btn btn-lg btn-danger' data-toggle='dropdown'>Admin</button><ul class='dropdown-menu'><li><a id='backup-addresses'>Export backup of all addresses</a></li><li class='divider'></li><li><a id='select-all'>Open all entries for editing</a></li><li class='divider'></li><li><a id='bing-all'>Correct opened addresses using Bing</a></li><li><a id='osm-all'>Correct opened addresses using OSM</a></li><li><a id='massive-change' href='#massiveChange' data-toggle='modal'>Batch edit fields in opened entries</a></li><li><a id='search-replace'>Search and replace in all opened entries</a></li><li class='divider'></li><li><a id='save-all'>Save all opened entries</a></li><li><a id='delete-all'>Delete all opened entries</a></li><li><a id='cancel-all'>Cancel all modifications</a></li></ul></li><button id='error-show' href='#errorMessage' class='hide' data-toggle='modal'>Error</button><button id='delete-show' href='#deleteMessage' class='hide' data-toggle='modal'>Error</button>");
     $("#select-all").click(function() {
       $.fx.off = true, $("#addresses tr").click();
     });
@@ -192,6 +192,21 @@ $(function() {
     var isBatch = !1;
     $("#dropdown-admin").on("click", function() {
       $(".dropdown-menu").is(":visible") ? $.fx.off = !1 : ($.fx.off = true, 0 === $("#addresses tr.edit").length ? $("#massive-change, #bing-all, #osm-all, #search-replace, #save-all, #delete-all, #cancel-all").parent("li").addClass("disabled") : $("#massive-change, #bing-all, #osm-all, #search-replace, #save-all, #delete-all, #cancel-all").parent("li").removeClass("disabled"), isBatch = $("#addresses tr.edit").length > 1 && true);
+    });
+    $("#backup-addresses").on("click", function() {
+      $("#addresses").after("<div id=\"loadingBackup\" class=\"modal fade hide\" tabindex=\"-1\"><div class=\"modal-header\"><h3>Address backup in progress</h3></div><div class=\"modal-body\">Please wait...</div</div><button id='loading-show' href='#loadingBackup' class='hide' data-toggle='modal'>Areas</button>");
+      $("#loading-show").click();
+      $.get("https://www.mcmxiv.com/alba/ts?mod=addresses&cmd=search&acids=3&exp=true&npp=25&cp=1&tid=0&lid=0&display=1%2C2%2C3%2C4%2C5%2C6&onlyun=false&q=&sort=id&order=desc&lat=&lng=", function(response) {
+        let a = document.createElement("a");
+        a.download = (new Date).toISOString().split("T")[0] + "-address-backup.tsv";
+        a.href = "data:text/plain;charset=UTF-8," + encodeURIComponent(response.data.exp);
+        a.textContent = "Download TSV";
+        a.id = "addressBackupDownload";
+        document.body.appendChild(a);
+        $("#addressBackupDownload").addClass("hide");
+        $("#addressBackupDownload")[0].click();
+        $("#loading-show").click();
+      });
     });
   } else if (curPage.includes("territories") || curPage.includes("assigned")) {
     GM_addStyle("#areasText ul{list-style-type:none;column-count:2} #polygonText{display:flex;height:30px;align-items:center} #polygonText button{margin-right:1em} #polygonText .progress{flex-grow:100;margin-bottom:0!important}");

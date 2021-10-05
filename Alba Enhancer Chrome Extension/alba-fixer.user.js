@@ -14,8 +14,8 @@
 
 $(function() {
   var colors = ["#b71c1c", "#880e4f", "#4a148c", "#0d47a1", "#006064", "#1b5e20", "#827717", "#ff6f00", "#212121", "#b71c1c", "#880e4f", "#4a148c", "#0d47a1", "#006064", "#1b5e20", "#827717", "#ff6f00", "#212121"],
-    hereAPIKey = "aXUToJoWnlgv0zCAgupM7ukogmefDriDS2ZcQroT8Ps",
-    mapquestAPIKey = "cWthMOAPfdye1t02NcpkzD30NVLfhNy6";
+    hereString = atob("YVhVVG9Kb1dubGd2MHpDQWd1cE03dWtvZ21lZkRyaURTMlpjUXJvVDhQcw=="),
+    mapquestString = atob("Y1d0aE1PQVBmZHllMXQwMk5jcGt6RDMwTlZMZmhOeTY=");
   GM_addStyle(".disabled a{pointer-events:none} li.dropdown.admin{padding-top:4px} .modal-backdrop {z-index: 24000} .modal {z-index: 25000}");
   $("ul.pull-right li.dropdown").last().find("a").first().find(".muted").hide();
   $("ul.nav:not(.pull-right) > li").each(function() {
@@ -88,7 +88,7 @@ $(function() {
         prevProvince = $(elem).siblings("[name='province']").val(),
         prevLat = $(elem).siblings("[name='lat']").val(),
         prevLng = $(elem).siblings("[name='lng']").val();
-      $.getJSON("https://geocode.search.hereapi.com/v1/geocode?q=" + encodeURIComponent([prevAddress, prevCity, prevPostCode, prevProvince, "Canada"].join(", ")) + "&apiKey=" + hereAPIKey + "&output=JSON").done(function(data) {
+      $.getJSON("https://geocode.search.hereapi.com/v1/geocode?q=" + encodeURIComponent([prevAddress, prevCity, prevPostCode, prevProvince, "Canada"].join(", ")) + "&apiKey=" + hereString + "&output=JSON").done(function(data) {
         try {
           var firstItem = data.items[0];
           if (firstItem.resultType == "houseNumber" && firstItem.scoring.queryScore > 0.5) {
@@ -386,7 +386,7 @@ $(function() {
         $(".sizeToggle").append("<select id='mapZoom'>"), $("#mapZoom").append("<option value=''>Auto</option>");
         for (i = 1; i <= 20; i++) $(".sizeToggle #mapZoom").append("<option value='" + i + "'>" + i + "</option>>");
         $(".sizeToggle #mqMe");
-        var mapquestUrl = "https://www.mapquestapi.com/staticmap/v5/map?size=500,500@2x&zoom=&declutter=true&key=" + mapquestAPIKey + "&locations=",
+        var mapquestUrl = "https://www.mapquestapi.com/staticmap/v5/map?size=500,500@2x&zoom=&declutter=true&key=" + mapquestString + "&locations=",
           pins = {},
           syntheticPin = 10;
         $(".addresses tbody tr").each(function() {

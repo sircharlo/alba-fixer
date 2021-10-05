@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Alba Enhancer
-// @version      0.1.11
+// @version      0.1.12
 // @description  Utilities and fixes for Alba
 // @author       SirCharlo
 // @match        https://www.mcmxiv.com/alba/*
@@ -287,10 +287,8 @@ $(function() {
         createShame();
       });
       $("#territories").on("click", "a.btn.btn-small.dropdown-toggle", function() {
-        let isTel = $(this).closest("tr").find("td.territory b").text().toLowerCase().includes("tel-");
-        let mobileLink = $(this).closest("tr").find("a.cmd-open[rel*=mobile], a.cmd-send-to.both");
-        mobileLink.toggleClass("disabled", !isTel);
-        mobileLink.css("pointer-events", (!isTel ? "none" : ""));
+        let isNotTel = !$(this).closest("tr").find("td.territory b").text().toLowerCase().includes("tel-");
+        $(this).closest("tr").find("a.cmd-open[rel*=mobile], a.cmd-send-to.both, a.cmd-send-to.print").parent().toggleClass("disabled", isNotTel);
       });
     }
   } else if (curPage.includes("print") || curPage.includes("campaign")) {

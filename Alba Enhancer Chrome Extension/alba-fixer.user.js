@@ -116,7 +116,7 @@ $(function() {
       observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
           mutation.addedNodes.length > 0 && "childList" == mutation.type && ($(mutation.addedNodes).find(".cmd-geocode").html("Google"), $(mutation.addedNodes).find("[name='lng']").siblings("small.muted").before("<small class='muted' id='geoMessage'></small><br/>"), $(mutation.addedNodes).find(".cmd-geocode").after("<button type=\"button\" class=\"btn btn-info btn-small cmd-bing\">Bing</button><br/>"), $(mutation.addedNodes).find(".cmd-geocode").after("<button type=\"button\" class=\"btn btn-info btn-small cmd-osm\">OSM</button>"), $(mutation.addedNodes).find("small.tt").each(function() {
-            $(this).html($(this).html() + ": " + $(this).data("original-title").split(" by ")[1].match(/\b(\w)/g).join(""));
+            $(this).html($(this).html() + ": " + $(this).data("original-title").split(" by ")[1].split(" ").map((name) => name[0]).join(""));
           }));
         });
       }),
@@ -126,7 +126,7 @@ $(function() {
       };
     observer.observe(target, config);
     $("td.person small.tt").each(function() {
-      $(this).html($(this).html() + ": " + $(this).data("original-title").split(" by ")[1].match(/\b(\w)/g).join(""));
+      $(this).html($(this).html() + ": " + $(this).data("original-title").split(" by ")[1].split(" ").map((name) => name[0]).join(""));
     });
     $("li.visible-desktop").after("<li class='dropdown admin'><button id='dropdown-admin' class='btn btn-lg btn-danger' data-toggle='dropdown'>Admin</button><ul class='dropdown-menu'><li><a id='backup-addresses'>Export backup of all addresses</a></li><li class='divider'></li><li><a id='select-all'>Open all entries for editing</a></li><li class='divider'></li><li><a id='bing-all'>Correct opened addresses using Bing</a></li><li><a id='osm-all'>Correct opened addresses using OSM</a></li><li><a id='massive-change' href='#massiveChange' data-toggle='modal'>Batch edit fields in opened entries</a></li><li><a id='search-replace'>Search and replace in all opened entries</a></li><li class='divider'></li><li><a id='save-all'>Save all opened entries</a></li><li><a id='delete-all'>Delete all opened entries</a></li><li><a id='cancel-all'>Cancel all modifications</a></li></ul></li><button id='error-show' href='#errorMessage' class='hide' data-toggle='modal'>Error</button><button id='delete-show' href='#deleteMessage' class='hide' data-toggle='modal'>Error</button>");
     $("#select-all").click(function() {
@@ -594,20 +594,22 @@ $(function() {
         id = row.find("td:nth-child(1)").text(),
         code = row.find("td:nth-child(2)").find("b").text().trim(),
         area = code.split("-")[0]; - 1 == $.inArray(area, areas) && areas.push(area);
-      var dateText = row.find("td:nth-child(5) small").text().trim().replace("Last completed ", "").split(" by ")[0],
-        dateActual = "";
-      dateText.includes("Never") || (dateActual = new Date(dateText)), code.includes("Wow") || (currentStatuses[code] = {
-        id: id,
-        code: code,
-        area: code.split("-")[0],
-        subarea: code.split("-")[1],
-        desc: orphanText(row.find("td:nth-child(2)")),
-        doors: parseInt(row.find("td:nth-child(3)").text().trim()),
-        status: row.find("td:nth-child(4)").text().trim(),
-        datesignedout: dateText,
-        dateactual: dateActual,
-        publisher: row.find("td:nth-child(5) strong").text().trim()
-      });
+      if (!code.toLowerCase().includes("tel-")) {
+        var dateText = row.find("td:nth-child(5) small").text().trim().replace("Last completed ", "").split(" by ")[0],
+          dateActual = "";
+        dateText.includes("Never") || (dateActual = new Date(dateText)), code.includes("Wow") || (currentStatuses[code] = {
+          id: id,
+          code: code,
+          area: code.split("-")[0],
+          subarea: code.split("-")[1],
+          desc: orphanText(row.find("td:nth-child(2)")),
+          doors: parseInt(row.find("td:nth-child(3)").text().trim()),
+          status: row.find("td:nth-child(4)").text().trim(),
+          datesignedout: dateText,
+          dateactual: dateActual,
+          publisher: row.find("td:nth-child(5) strong").text().trim()
+        });
+      }
     });
     Object.keys(currentStatuses).filter(function(key) {
       if (!currentStatuses[key].datesignedout.includes("Never")) return currentStatuses[key].publisher.includes("Printed") && (currentStatuses[key].publisher = "Publisher"), currentlySignedOut[key] = currentStatuses[key], key;

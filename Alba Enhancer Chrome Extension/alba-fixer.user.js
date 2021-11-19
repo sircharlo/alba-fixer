@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Alba Enhancer
-// @version      0.1.12
+// @version      0.1.13
 // @description  Utilities and fixes for Alba
 // @author       SirCharlo
 // @match        https://www.mcmxiv.com/alba/*
@@ -11,6 +11,7 @@
 // ==/UserScript==
 
 /* eslint no-undef: "off", no-console: "off" */
+/*eslint-env es6*/
 
 $(function() {
   var colors = ["#b71c1c", "#880e4f", "#4a148c", "#0d47a1", "#006064", "#1b5e20", "#827717", "#ff6f00", "#212121", "#b71c1c", "#880e4f", "#4a148c", "#0d47a1", "#006064", "#1b5e20", "#827717", "#ff6f00", "#212121"],
@@ -292,7 +293,7 @@ $(function() {
       });
     }
   } else if (curPage.includes("print") || curPage.includes("campaign")) {
-    GM_addStyle("table th, table td{padding: 2pt 0pt;},.card{max-width:8.25in;margin:0 auto}td.attempts div{height:8px;width:8px;border-color:#777}table tr{height:18px}.attempts{min-width:1px!important}.italic{font-variant:italic}.transparent{color:transparent}.break{display:block}.campaign{letter-spacing:-.5px}.addresses tbody td{white-space:nowrap;vertical-align:middle}img.map{width:4in!important;height:4in!important}.marker{width:12px!important;text-align:center!important;padding:1px 0 0!important}p.print-notes{padding:1em;border-style:solid;display:inline-block;border-radius:1em;margin-bottom:10pt;margin-right:0}.st1_bg{background-color:#66d2ff!important;color:#000!important}.st2_bg{background-color:#52d965!important;color:#000!important}.st6_bg{background-color:#ccc!important;color:#fff!important}.white-bg{background-color:#fff!important}.returnDate{padding:.5em 2.5em .5em 1.5em;border-radius:0 0 1em 0;display:inline-block;-webkit-print-color-adjust:exact;background:#ffab91;position:absolute}.returnDateString{font-weight:700}.group{display:inline-block;padding:.5em 1.5em .5em 2.5em;border-radius:0 0 0 1em;float:left}.group-name{font-weight:700}.directions{margin-top:10pt!important}a.directions,h1{margin-top:3em!important}.group-ls{background:#e1bee7}//purple 1 .group-lc{background:#aed581}//green 3 .group-kh{background:#80cbc4}//turquoise 2 .group-pf{background:#ffe082}// yellow 2 .strike{text-decoration:line-through}.instructions{font-size:90%;line-height:normal}.instructionsRU{font-size:100%;margin-top:2em}.langRU{column-count:2;list-style-position:inside}.phoneEntries{font-size:90%}.campaignHeader{margin:0 0 10pt}.doNotCallBadge{background-color:#444!important;color:#fff!important}.sizeToggle{position:absolute;left:50%;transform:translateX(-50%);top:1%;background:rgba(255,255,255,.9);border:2px #000 solid;border-radius:1em;padding:1em;z-index:99}.sizeToggle ul{padding:0;margin-bottom:0}.sizeToggle ul li{list-style-type:none}#mqMe{margin-left:1em}.label-language{border:1px solid rgba(0,0,0,.4);color:#000!important;font-size:90%!important;margin:0 .5em}#pageLine{border-top:2px solid #ccc;width:100%;position:absolute;top:10.15in;right:0}#transferDiv span.label{width:15em}#transferDiv textarea{width:30em;height:10em}@media print{.sizeToggle{display:none!important}#pageLine{display:none!important}}");
+    GM_addStyle("table th, table td{padding: 2pt 0pt;},.card{max-width:8.25in;margin:0 auto}td.attempts div{height:8px;width:8px;border-color:#777}table tr{height:18px}.attempts{min-width:1px!important}.italic{font-variant:italic}.transparent{color:transparent}.break{display:block}.campaign{letter-spacing:-.5px}.addresses tbody td{white-space:nowrap;vertical-align:middle}img.map{width:4in!important;height:4in!important}.marker{width:12px!important;text-align:center!important;padding:1px 0 0!important}p.print-notes{padding:1em;border-style:solid;display:inline-block;border-radius:1em;margin-bottom:10pt;margin-right:0}.st1_bg{background-color:#66d2ff!important;color:#000!important}.st2_bg{background-color:#52d965!important;color:#000!important}.st6_bg{background-color:#ccc!important;color:#fff!important}.white-bg{background-color:#fff!important}.returnDate{padding:.5em 2.5em .5em 1.5em;border-radius:0 0 1em 0;display:inline-block;-webkit-print-color-adjust:exact;background:#ffab91;position:absolute}.returnDateString{font-weight:700}.group{display:inline-block;padding:.5em 1.5em .5em 2.5em;border-radius:0 0 0 1em;float:left}.group-name{font-weight:700}.directions{margin-top:10pt!important}a.directions,h1{margin-top:3em!important}.group-ls{background:#e1bee7}//purple 1 .group-lc{background:#aed581}//green 3 .group-kh{background:#80cbc4}//turquoise 2 .group-pf{background:#ffe082}// yellow 2 .strike{text-decoration:line-through}.instructions{font-size:90%;line-height:normal}.instructionsRU{font-size:100%;margin-top:2em}.langRU{column-count:2;list-style-position:inside}.phoneEntries{font-size:90%}.campaignHeader{margin:0 0 10pt}.doNotCallBadge{background-color:#444!important;color:#fff!important}.sizeToggle{position:absolute;left:50%;transform:translateX(-50%);top:1%;background:rgba(255,255,255,.9);border:2px #000 solid;border-radius:1em;padding:1em;z-index:99}.sizeToggle ul{padding:0;margin-bottom:0}.sizeToggle ul li{list-style-type:none}#mqMe{margin-left:1em}.label-language{border:1px solid rgba(0,0,0,.4);color:#000!important;font-size:90%!important;margin:0 .5em}#pageLine{border-top:2px solid #ccc;width:100%;position:absolute;top:10.15in;right:0}#transferDiv span.label{width:15em}#transferDiv textarea{width:30em;height:10em}@media print{.sizeToggle{display:none!important}#pageLine{display:none!important}.no-print{display:none!important}}");
     $("p").addClass("instructions"), $("small.muted, .overview, h1 span.muted,span.badge").hide();
     $(".addresses tr").each(function() {
       $(this).find("td:nth-child(3), th:nth-child(3)").insertAfter($(this).find("td:nth-child(6), th:nth-child(6)"));
@@ -418,7 +419,40 @@ $(function() {
         });
         $(".addresses tbody tr td:nth-child(6):contains(Russian)").removeClass("muted").addClass("transparent");
         if (window.location.href.includes("st=1,2,3")) window.location.href = window.location.href.replace("st=1,2,3", "st=1,2");
-        window.print();
+        $(".addresses tr td:nth-child(4)").each(function() {
+          let addressElem = $(this);
+          let address = $(this).contents().filter(function() {
+            return this.nodeType == 3;
+          })[0].nodeValue.split(", ");
+          let hasAptNumber = address.length > (address.includes("QC") ? 4 : 2);
+          if (hasAptNumber) {
+            address[0] = address[0].replace(/[apt.? ]+/gi, "").replace(/\s*\([\d\w]+\)\s*/gi, "");
+            if (address[0].length == 0) address.shift();
+            hasAptNumber = address.length > (address.includes("QC") ? 4 : 2);
+            if (hasAptNumber) {
+              [address[0], address[1]] = [address[1], address[0]];
+              let tempAddr = address[0].split(" ");
+              tempAddr.splice(1, 0, address[1]);
+              tempAddr[1] = tempAddr[0] + "-" + tempAddr[1];
+              tempAddr.shift();
+              address[1] = tempAddr.join(" ");
+              address.shift();
+            }
+          }
+          $.get("https://ws1.postescanada-canadapost.ca/Capture/Interactive/Find/v1.00/json3ex.ws?Key=ea98-jc42-tf94-jk98&Text=" + address + "&Container=&Origin=CAN&Countries=CAN&Datasets=&Limit=7&Filter=&Language=en", function(data) {
+            let isBuilding = data.Items.filter(item => item.Type == "BuildingNumber").length > 0;
+            let consoleColor = "";
+            if (isBuilding && !hasAptNumber) {
+              addressElem.wrapInner("<strike>");
+              addressElem.prepend("<span class='badge badge-danger building' style='background-color: #dc3545;'>Building - " + data.Items.filter(item => item.Type == "BuildingNumber")[0].Description.split(" - ")[1] + "</span>");
+              consoleColor = "background-color: #ffcccc; color: black;";
+            } else {
+              addressElem.prepend("<span class='badge badge-success not-incomplete-building no-print'>OK</span>");
+            }
+            console.log("%c" + [address.join(", "), hasAptNumber, isBuilding].join(" "), consoleColor);
+            console.log(data.Items);
+          });
+        });
       }
       var statuses = [];
       $(this).find(".addresses tbody tr").each(function() {
@@ -492,7 +526,7 @@ $(function() {
           var area = orphanText($(this)
             .find("td:nth-child(2)"))
             .split(" - ")[0];
-          areas.hasOwnProperty(area) || (areas[area] = {
+          Object.prototype.hasOwnProperty.call(areas, area) || (areas[area] = {
             total: 0,
             donePastYear: 0,
             notDonePastYear: 0

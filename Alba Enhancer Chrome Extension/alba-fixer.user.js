@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Alba Enhancer
-// @version      0.1.13
+// @version      0.1.14
 // @description  Utilities and fixes for Alba
 // @author       SirCharlo
 // @match        https://www.mcmxiv.com/alba/*
@@ -421,16 +421,14 @@ $(function() {
         if (window.location.href.includes("st=1,2,3")) window.location.href = window.location.href.replace("st=1,2,3", "st=1,2");
         $(".addresses tr td:nth-child(4)").each(function() {
           let addressElem = $(this);
-          let address = $(this).contents().filter(function() {
-            return this.nodeType == 3;
-          })[0].nodeValue.split(", ");
+          addressElem.find("span").remove();
+          let address = $(this).text().trim().split(", ");
           let hasAptNumber = address.length > (address.includes("QC") ? 4 : 2);
           if (hasAptNumber) {
             address[0] = address[0].replace(/[apt.? ]+/gi, "").replace(/\s*\([\d\w]+\)\s*/gi, "");
             if (address[0].length == 0) address.shift();
             hasAptNumber = address.length > (address.includes("QC") ? 4 : 2);
             if (hasAptNumber) {
-              [address[0], address[1]] = [address[1], address[0]];
               let tempAddr = address[0].split(" ");
               tempAddr.splice(1, 0, address[1]);
               tempAddr[1] = tempAddr[0] + "-" + tempAddr[1];
@@ -439,18 +437,22 @@ $(function() {
               address.shift();
             }
           }
-          $.get("https://ws1.postescanada-canadapost.ca/Capture/Interactive/Find/v1.00/json3ex.ws?Key=ea98-jc42-tf94-jk98&Text=" + address + "&Container=&Origin=CAN&Countries=CAN&Datasets=&Limit=7&Filter=&Language=en", function(data) {
-            let isBuilding = data.Items.filter(item => item.Type == "BuildingNumber").length > 0;
-            let consoleColor = "";
-            if (isBuilding && !hasAptNumber) {
-              addressElem.wrapInner("<strike>");
-              addressElem.prepend("<span class='badge badge-danger building' style='background-color: #dc3545;'>Building - " + data.Items.filter(item => item.Type == "BuildingNumber")[0].Description.split(" - ")[1] + "</span>");
-              consoleColor = "background-color: #ffcccc; color: black;";
-            } else {
-              addressElem.prepend("<span class='badge badge-success not-incomplete-building no-print'>OK</span>");
+          if (address.length == 4) address = [address[0], address[3]];
+          $.ajax({
+            url: "https://ws1.postescanada-canadapost.ca/Capture/Interactive/Find/v1.00/json3ex.ws?Key=ea98-jc42-tf94-jk98&Text=" + address + "&Container=&Origin=CAN&Countries=CAN&Datasets=&Limit=7&Filter=&Language=en",
+            async: false,
+            complete: function(data) {
+              if (data.responseJSON) {
+                let isBuilding = data.responseJSON.Items.filter(item => item.Type == "BuildingNumber").length > 0;
+                if (isBuilding && !hasAptNumber) {
+                  addressElem.wrapInner("<strike>");
+                  addressElem.prepend("<span class='badge badge-danger building' style='background-color: #dc3545;'>Building - " + data.responseJSON.Items.filter(item => item.Type == "BuildingNumber")[0].Description.split(" - ")[1] + "</span>");
+                } else {
+                  addressElem.prepend("<span class='badge badge-success not-incomplete-building no-print'>OK</span>");
+                }
+                console.log(address.join(", "), hasAptNumber, isBuilding, data.responseJSON.Items);
+              }
             }
-            console.log("%c" + [address.join(", "), hasAptNumber, isBuilding].join(" "), consoleColor);
-            console.log(data.Items);
           });
         });
       }

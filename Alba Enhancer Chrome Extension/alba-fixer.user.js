@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Alba Enhancer
-// @version      0.1.14
+// @version      0.1.15
 // @description  Utilities and fixes for Alba
 // @author       SirCharlo
 // @match        https://www.mcmxiv.com/alba/*
@@ -440,7 +440,7 @@ $(function() {
           if (address.length == 4) address = [address[0], address[3]];
           $.ajax({
             url: "https://ws1.postescanada-canadapost.ca/Capture/Interactive/Find/v1.00/json3ex.ws?Key=ea98-jc42-tf94-jk98&Text=" + address + "&Container=&Origin=CAN&Countries=CAN&Datasets=&Limit=7&Filter=&Language=en",
-            async: false,
+            //  async: false,
             complete: function(data) {
               if (data.responseJSON) {
                 let isBuilding = data.responseJSON.Items.filter(item => item.Type == "BuildingNumber").length > 0;

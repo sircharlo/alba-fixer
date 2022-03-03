@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Alba Enhancer
-// @version      0.1.15
+// @version      0.1.16
 // @description  Utilities and fixes for Alba
 // @author       SirCharlo
 // @match        https://www.mcmxiv.com/alba/*
@@ -288,8 +288,8 @@ $(function() {
         createShame();
       });
       $("#territories").on("click", "a.btn.btn-small.dropdown-toggle", function() {
-        let isNotTel = !$(this).closest("tr").find("td.territory b").text().toLowerCase().includes("tel-");
-        $(this).closest("tr").find("a.cmd-open[rel*=mobile], a.cmd-send-to.both, a.cmd-send-to.print").parent().toggleClass("disabled", isNotTel);
+        //let isNotTel = !$(this).closest("tr").find("td.territory b").text().toLowerCase().includes("tel-");
+        $(this).closest("tr").find("a.cmd-open[rel*=mobile], a.cmd-send-to.both, a.cmd-send-to.print").parent().toggleClass("disabled", /*isNotTel*/ true);
       });
     }
   } else if (curPage.includes("print") || curPage.includes("campaign")) {
@@ -310,7 +310,7 @@ $(function() {
     1 == $(".card").length && (document.title = $("h1 strong").text());
     $(".card").each(function() {
       if ($(this).find("h1:contains(Telephone)").length > 0) {
-        $(".map, #map-canvas, p:not(:contains(Notes)):eq(4)").hide(), $(this).find("h1 strong").addClass("st2_c");
+        $(".map, #map-canvas, .qrcode, p:not(:contains(Notes)):eq(4)").hide(), $(this).find("h1 strong").addClass("st2_c");
         var languages = ["Р", "Б", "У", "А", "Ф", "NIS", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"],
           html = "<p class='instructionsRU'>Пожалуйста, установите галочки, чтобы указать, на каком языке каждый человек говорит.</p><ul class='langRU'>";
         $.each(["На русском", "На болгарском", "На украинском", "На английском", "На французском", "Телефон не работает"], function(k, v) {

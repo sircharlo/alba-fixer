@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Alba Enhancer
-// @version      0.1.16
+// @version      0.1.17
 // @description  Utilities and fixes for Alba
 // @author       SirCharlo
 // @match        https://www.mcmxiv.com/alba/*
@@ -357,8 +357,8 @@ $(function() {
             ((contactedDate - soDate) / 1e3 / 60 / 60 / 24 / 30.5 > -4 || (contactedDate - soDate) / 1e3 / 60 / 60 / 24 / 30.5 > -4) && ($(this).show(), $(this).closest("tr").addClass("muted"), $(this).closest("tr").find("td:nth-child(n+3)").addClass("strike").addClass("italic"), $(this).closest("tr").find("td:nth-child(5)").html($(this)).attr("colspan", 3).addClass("right").removeClass("strike"), $(this).closest("tr").find("td:nth-child(1) strong").addClass("st6_bg"), $(this).closest("tr").find("td:nth-child(2) strong").addClass("tk1_c_f"), $(this).closest("tr").find("td:nth-child(6),td.attempts").hide());
           });
         }
-        $("#map-canvas").remove();
-        $(".attempts div, .qrcode, span.nw, .instructions").hide();
+        //$("#map-canvas").remove();
+        //$(".attempts div, .qrcode, span.nw, .instructions").hide();
         $(this).find(".addresses thead th, .addresses tr td:nth-child(2), .addresses tr td:nth-child(5), .addresses tr td:nth-child(6)").html("");
         if ($("p.instructions .muted").hide(), -1 !== $("p:contains(Signed)").text().indexOf("Signed out")) {
           var dateOptions = {
@@ -418,14 +418,14 @@ $(function() {
           $(".map").prop("src", src.replace(/zoom=[\d]*/g, "zoom=" + zoom));
         });
         $(".addresses tbody tr td:nth-child(6):contains(Russian)").removeClass("muted").addClass("transparent");
-        if (window.location.href.includes("st=1,2,3")) window.location.href = window.location.href.replace("st=1,2,3", "st=1,2");
-        $(".addresses tr td:nth-child(4)").each(function() {
+        //if (window.location.href.includes("st=1,2,3")) window.location.href = window.location.href.replace("st=1,2,3", "st=1,2");
+        /*$(".addresses tr td:nth-child(4)").each(function() {
           let addressElem = $(this);
           addressElem.find("span").remove();
           let address = $(this).text().trim().split(", ");
           let hasAptNumber = address.length > (address.includes("QC") ? 4 : 2);
           if (hasAptNumber) {
-            address[0] = address[0].replace(/[apt.? ]+/gi, "").replace(/\s*\([\d\w]+\)\s*/gi, "");
+            address[0] = address[0].replace(/[apt.? ]+/gi, "").replace(/\s*\([\d\w]+\)\s*\/gi, "");
             if (address[0].length == 0) address.shift();
             hasAptNumber = address.length > (address.includes("QC") ? 4 : 2);
             if (hasAptNumber) {
@@ -454,7 +454,7 @@ $(function() {
               }
             }
           });
-        });
+        });*/
       }
       var statuses = [];
       $(this).find(".addresses tbody tr").each(function() {
